@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container mt-5">
+    <table class="table table-bordered">
+        <!-- Primera fila -->
+        <thead>
+            <tr style="background-color: #800080; color: white;">
+                <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
+                <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
+                    <span>BUSCAR POR ESTADO</span>
+                    <input type="text" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;" placeholder="Buscar">
+                </th>
+            </tr>
+        </thead>
+        <!-- Segunda fila -->
+        <thead>
+            <tr style="color: black;">
+                <th style="background-color: #c080c0;"></th>
+                <th style="background-color: #c080c0;">ID</th>
+                <th style="background-color: #c080c0;">ÚLTIMA ACTUALIZACIÓN</th>
+                <th style="background-color: #c080c0;">USUARIO</th>
+                <th style="background-color: #c080c0;">ASUNTO</th>
+                <th style="background-color: #c080c0;">ESTADO</th>
+                <th style="background-color: #c080c0;">ASIGNADO A</th>
+            </tr>
+        </thead>
+
+        <!-- Filas siguientes generadas con datos de la base de datos -->
+        @* <tbody>
+        @* Aquí puedes utilizar un bucle para generar las filas dinámicamente a partir de los datos de la base de datos *@
+        @* @foreach (var ticket in Model.Tickets)*@
+        @*  {
+        <tr>
+        <td style="background-color: #c080c0;"></td>
+        <td>@ticket.Id</td>
+        <td>@ticket.LastUpdated</td>
+        <td>@ticket.User</td>
+        <td>@ticket.Subject</td>
+        <td>@ticket.Status</td>
+        <td>@ticket.AsignadoA</td>
+        </tr>
+        }
+        </tbody>*@
+    </table>
+</div>

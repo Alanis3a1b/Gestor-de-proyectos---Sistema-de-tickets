@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Ticket Trabajado";
+}
+<div class="container mt-5">
+    <div class="card mb-3">
+        <div class="card-header" style="background-color: #800080; color: white;">
+            TICKET TRABAJADO #
+        </div>
+        <div class="card-body" style="background-color: #d3d3d3; color: black;">
+            <p class="font-weight-bold" style="text-align: left;">
+                Por favor rellenar el formulario para abrir un nuevo ticket.
+            </p>
+            <hr>
+            <p class="font-weight-bold">
+                Información de contacto
+            </p>
+            <div class="form-group">
+                <label for="fullName" class="font-weight-bold">Nombre completo:</label>
+                <input type="text" class="form-control" id="fullName" value="Nombre Completo" readonly>
+            </div>
+            <div class="form-group">
+                <label for="phone" class="font-weight-bold">Número de teléfono:</label>
+                <input type="text" class="form-control" id="phone" value="Número de Teléfono" readonly>
+            </div>
+            <div class="form-group">
+                <label for="email" class="font-weight-bold">Email:</label>
+                <input type="email" class="form-control" id="email" value="Email" readonly>
+            </div>
+            <hr>
+            <p class="font-weight-bold">
+                Detalles de Ticket
+            </p>
+            <div class="form-group">
+                <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
+                <input type="text" class="form-control" id="ticketTitle" value="Título del Ticket" readonly>
+            </div>
+
+            <!-- Text Editor Placeholder -->
+            <div class="form-group">
+                <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
+                <input type="text" class="form-control" id="ticketTitle" value="Detalles del ticket" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-lg small">REGRESAR</button>
+    </div>
+
+</div>

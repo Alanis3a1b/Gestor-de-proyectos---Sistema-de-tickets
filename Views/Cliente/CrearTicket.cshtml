@@ -1,0 +1,95 @@
+﻿@{
+    ViewBag.Title = "Crear Ticket";
+}
+
+<div class="container mt-5">
+    <div class="card mb-3">
+        <div class="card-header" style="background-color: #800080; color: white;">
+            CREAR NUEVO TICKET
+        </div>
+        <div class="card-body" style="background-color: #d3d3d3; color: black;">
+            <p class="font-weight-bold" style="text-align: left;">
+                Por favor rellenar el formulario para abrir un nuevo ticket.
+            </p>
+            <hr>
+            <p class="font-weight-bold">
+                Información de contacto
+            </p>
+            <form>
+                <div class="form-group">
+                    <label for="fullName" class="font-weight-bold">Nombre completo <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="fullName" placeholder="Ingrese su nombre completo">
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="font-weight-bold">Número de teléfono <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="phone" placeholder="Ingrese su número de teléfono">
+                </div>
+                <div class="form-group">
+                    <label for="email" class="font-weight-bold">Email <span style="color: red;">*</span></label>
+                    <input type="email" class="form-control" id="email" placeholder="Ingrese su email">
+                </div>
+            </form>
+            <hr>
+            <p class="font-weight-bold">
+                Detalles de Ticket
+            </p>
+            <p>
+                Por favor describa su problemática
+            </p>
+            <p class="font-weight-bold">
+                Titulo del ticket
+            </p>
+            <input type="text" class="form-control mb-3" id="ticketTitle" placeholder="Ingrese el título del ticket">
+
+            <!-- Text Editor Placeholder -->
+            <div class="form-group">
+                <label for="ticketDescription" class="font-weight-bold">Descripción del ticket</label>
+                <textarea class="form-control" id="ticketDescription" rows="5" placeholder="Ingrese la descripción del ticket"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-lg small">CREAR TICKET</button>
+    </div>
+
+</div>
+
+<!-- Scripts específicos de la vista CrearTicket.cshtml -->
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#ticketDescription',
+            plugins: 'image imagetools media link codesample table',
+            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect | link | table | image media',
+            images_upload_url: '/Cliente/TicketTrabajado', // URL del método de carga de archivos en tu controlador
+            images_upload_base_path: '/uploads', // Ruta base para las imágenes cargadas
+            images_upload_credentials: true,
+            automatic_uploads: true,
+            file_picker_types: 'image media',
+            file_picker_callback: function (callback, value, meta) {
+                if (meta.filetype === 'image') {
+                    // Open a dialog to choose an image from the web or local storage
+                    // For example, you can use a file input field to let the user choose a file
+                    document.getElementById('file-input').click();
+                    document.getElementById('file-input').onchange = function () {
+                        var file = this.files[0];
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            // Assume "url" is the URL of the uploaded image
+                            var url = URL.createObjectURL(file);
+                            callback(url, { title: file.name });
+                        };
+                        reader.readAsDataURL(file);
+                    };
+                } else if (meta.filetype === 'media') {
+                    // Open a dialog to choose a media file from the web or local storage
+                    // Implement similar logic as above for media files
+                    console.log('Select media file');
+                }
+            }
+        });
+    </script>
+}
+

@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <div class="card text-white bg-purple mb-3 w-100 rounded" style="background-color: #800080;">
+        <div class="card-body">
+            <h5 class="card-title">Bienvenido a HelpHub</h5>
+            <p class="card-text">
+                En HelpHub estamos dedicados a brindarte soluciones rápidas y orientación experta para todos
+                tus problemas de tecnología de la información (IT). Nuestro equipo de expertos está aquí para ayudarte a resolver cualquier input
+                , desde problemas técnicos hasta consultas de software. En HelpHub, tu satisfacción es nuestra
+                prioridad número uno. ¡Déjanos encargarnos de tus preocupaciones tecnológicas para que puedas concentrarte en lo que realmente importa!
+            </p>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-primary btn-lg small">CREAR NUEVO TICKET</button>
+    </div>
+
+<hr />
+
+    <table class="table table-bordered">
+        <!-- Primera fila -->
+        <thead>
+            <tr style="background-color: #800080; color: white;">
+                <th colspan="6" class="text-center">TUS TICKETS</th>
+            </tr>
+        </thead>
+        <!-- Segunda fila -->
+        <thead>
+            <tr style="color: black;">
+                <th style="background-color: #c080c0;"></th>
+                <th style="background-color: #c080c0;">ID</th>
+                <th style="background-color: #c080c0;">ÚLTIMA ACTUALIZACIÓN</th>
+                <th style="background-color: #c080c0;">USUARIO</th>
+                <th style="background-color: #c080c0;">ASUNTO</th>
+                <th style="background-color: #c080c0;">ESTADO</th>
+            </tr>
+        </thead>
+        <!-- Filas siguientes generadas con datos de la base de datos -->
+        @* <tbody>
+            @* Aquí puedes utilizar un bucle para generar las filas dinámicamente a partir de los datos de la base de datos *@
+        @* @foreach (var ticket in Model.Tickets)*@
+          @*  {
+                <tr>
+                    <td style="background-color: #c080c0;"></td>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.LastUpdated</td>
+                    <td>@ticket.User</td>
+                    <td>@ticket.Subject</td>
+                    <td>@ticket.Status</td>
+                </tr>
+            }
+        </tbody>*@
+    </table>
+
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-lg small">VER HISTORIAL DE TICKETS</button>
+    </div>
+</div>
