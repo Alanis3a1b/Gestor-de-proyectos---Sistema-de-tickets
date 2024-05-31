@@ -1,7 +1,17 @@
+using Microsoft.EntityFrameworkCore;
+using Sistema_de_tickets.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Inyeccion del contexto para la base de datos
+builder.Services.AddDbContext<sistemadeticketsDBContext>(opt =>
+        opt.UseSqlServer(
+            builder.Configuration.GetConnectionString("ticketsDbConnection")
+            )
+);
 
 var app = builder.Build();
 
