@@ -1,19 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
 using System.Diagnostics;
+
+//Controlador para la parte de los clientes
 namespace Sistema_de_tickets.Controllers
 {
     public class ClienteController : Controller
     {
-        private readonly ILogger<ClienteController> _logger;
+        //private readonly ILogger<ClienteController> _logger;
 
-        public ClienteController(ILogger<ClienteController> logger)
+        //public ClienteController(ILogger<ClienteController> logger)
+        //{
+        //    _logger = logger;
+        //}
+
+        //Necesario hacer estos contextos antes de empezar a programar 
+        private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
+
+        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext)
         {
-            _logger = logger;
+            _sistemadeticketsDBContext = sistemadeticketsDbContext;
         }
 
         public IActionResult CrearTicket()
         {
+            //Aquí listaremos el listado de los clientes
+            var listaDeUsuarios = (from m in _sistemadeticketsDBContext.usuarios
+                                      select m).ToList();
+            ViewData["listadoDeUsuarios"] = new SelectList(listaDeUsuarios, "id_usuario", "nombre");
             return View();
         }
 
@@ -70,6 +85,17 @@ namespace Sistema_de_tickets.Controllers
             }
 
             return Ok(filePaths);
+        }
+
+        //Función para guardar crear los tickets
+        //(usuarios nuevoUsuario) ---> ("nombre tabla a meter datos" "variable")
+        public IActionResult CrearTickets(tickets nuevoTicket)
+        {
+            _sistemadeticketsDBContext.Add(nuevoTicket);
+            _sistemadeticketsDBContext.SaveChanges();
+
+            return RedirectToAction("Formulario");
+
         }
 
 
