@@ -1,10 +1,12 @@
 ﻿@{
     ViewBag.Title = "Ticket Trabajado";
+    var ticket = ViewData["Ticket"] as dynamic;
 }
+
 <div class="container mt-5">
     <div class="card mb-3">
         <div class="card-header" style="background-color: #800080; color: white;">
-            TICKET TRABAJADO #
+            TICKET TRABAJADO # @ticket.id_ticket
         </div>
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
             <p class="font-weight-bold" style="text-align: left;">
@@ -16,15 +18,16 @@
             </p>
             <div class="form-group">
                 <label for="fullName" class="font-weight-bold">Nombre completo:</label>
-                <input type="text" class="form-control" id="fullName" value="Nombre Completo" readonly>
+                <input type="text" class="form-control" id="fullName" value="@ticket.nombre" readonly>
             </div>
+            @*
             <div class="form-group">
                 <label for="phone" class="font-weight-bold">Número de teléfono:</label>
-                <input type="text" class="form-control" id="phone" value="Número de Teléfono" readonly>
-            </div>
+                <input type="text" class="form-control" id="phone" value="@ticket.telefono_usuario" readonly>
+            </div>*@
             <div class="form-group">
                 <label for="email" class="font-weight-bold">Email:</label>
-                <input type="email" class="form-control" id="email" value="Email" readonly>
+                <input type="email" class="form-control" id="email" value="@ticket.correo_usuario" readonly>
             </div>
             <hr>
             <p class="font-weight-bold">
@@ -32,19 +35,19 @@
             </p>
             <div class="form-group">
                 <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
-                <input type="text" class="form-control" id="ticketTitle" value="Título del Ticket" readonly>
+                <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
             </div>
 
-            <!-- Text Editor Placeholder -->
+            <!-- Utiliza un elemento <textarea> para permitir texto multi-línea -->
             <div class="form-group">
-                <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
-                <input type="text" class="form-control" id="ticketTitle" value="Detalles del ticket" readonly>
+                <label for="ticketDetails" class="font-weight-bold">Detalles del ticket:</label>
+                <textarea class="form-control" id="ticketDetails" rows="5" readonly>@ticket.descripcion</textarea>
             </div>
         </div>
     </div>
 
     <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small">REGRESAR</button>
+        <!-- Utiliza un botón de tipo "button" para evitar envíos de formulario -->
+        <button type="button" class="btn btn-primary btn-lg small" onclick="history.back()">REGRESAR</button>
     </div>
-
 </div>

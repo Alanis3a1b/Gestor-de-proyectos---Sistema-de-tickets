@@ -2,19 +2,13 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
 using System.Diagnostics;
+using System.Linq;
 
 //Controlador para la parte de los clientes
 namespace Sistema_de_tickets.Controllers
 {
     public class ClienteController : Controller
     {
-        //private readonly ILogger<ClienteController> _logger;
-
-        //public ClienteController(ILogger<ClienteController> logger)
-        //{
-        //    _logger = logger;
-        //}
-
         //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
 
@@ -40,23 +34,80 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult HistorialDeTickets()
         {
+            var historialTickets = from t in _sistemadeticketsDBContext.tickets
+                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                                   select new
+                                   {
+                                       t.id_ticket,
+                                       t.fecha,
+                                       Usuario = u.usuario,
+                                       t.nombre_ticket,
+                                       Estado = e.nombre_estado,
+                                       AsignadoA = u.nombre 
+                                   };
+
+            ViewData["HistorialTickets"] = historialTickets.ToList();
+
             return View();
         }
 
+
         public IActionResult HomeCliente()
         {
+            var tickets = (from t in _sistemadeticketsDBContext.tickets
+                           join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                           join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                           select new
+                           {
+                               t.id_ticket,
+                               t.fecha,
+                               u.usuario,
+                               t.nombre_ticket,
+                               e.nombre_estado
+                           }).Take(3).ToList(); //Máximo de filas (tickets) a mostrar en el Home de Cliente
+
+            ViewBag.Tickets = tickets;
             return View();
         }
+
 
         public IActionResult Settings()
         {
             return View();
         }
 
-        public IActionResult TicketTrabajado()
+
+        public IActionResult TicketTrabajado(int id)
         {
+            var ticket = (from t in _sistemadeticketsDBContext.tickets
+                          join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          where t.id_ticket == id
+                          select new
+                          {
+                              t.id_ticket,
+                              t.fecha,
+                              Usuario = u.usuario,
+                              t.nombre_ticket,
+                              t.descripcion,
+                              Estado = e.nombre_estado,
+                              AsignadoA = u.nombre,
+                              correo_usuario = u.correo,
+                              nombre = u.nombre,
+                              //telefono_usuario = u.telefono_usuario // Agrega el teléfono del usuario a la consulta
+                          }).FirstOrDefault();
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["Ticket"] = ticket;
+
             return View();
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -103,6 +154,8 @@ namespace Sistema_de_tickets.Controllers
             return RedirectToAction("Success");
 
         }
+
+
 
         public IActionResult Success()
         {

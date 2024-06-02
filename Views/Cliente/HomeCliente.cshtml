@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    var tickets = ViewBag.Tickets;
 }
 
 <div class="container mt-5">
@@ -16,19 +17,17 @@
     </div>
 
     <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-primary btn-lg small">CREAR NUEVO TICKET</button>
+        <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("CrearTicket", "Cliente")'">CREAR NUEVO TICKET</button>
     </div>
 
-<hr />
+    <hr />
 
     <table class="table table-bordered">
-        <!-- Primera fila -->
         <thead>
             <tr style="background-color: #800080; color: white;">
                 <th colspan="6" class="text-center">TUS TICKETS</th>
             </tr>
         </thead>
-        <!-- Segunda fila -->
         <thead>
             <tr style="color: black;">
                 <th style="background-color: #c080c0;"></th>
@@ -39,24 +38,22 @@
                 <th style="background-color: #c080c0;">ESTADO</th>
             </tr>
         </thead>
-        <!-- Filas siguientes generadas con datos de la base de datos -->
-        @* <tbody>
-            @* Aquí puedes utilizar un bucle para generar las filas dinámicamente a partir de los datos de la base de datos *@
-        @* @foreach (var ticket in Model.Tickets)*@
-          @*  {
+        <tbody>
+            @foreach (var ticket in tickets)
+            {
                 <tr>
                     <td style="background-color: #c080c0;"></td>
-                    <td>@ticket.Id</td>
-                    <td>@ticket.LastUpdated</td>
-                    <td>@ticket.User</td>
-                    <td>@ticket.Subject</td>
-                    <td>@ticket.Status</td>
+                    <td>@ticket.id_ticket</td>
+                    <td>@ticket.fecha.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>@ticket.usuario</td>
+                    <td>@ticket.nombre_ticket</td>
+                    <td>@ticket.nombre_estado</td>
                 </tr>
             }
-        </tbody>*@
+        </tbody>
     </table>
 
     <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small">VER HISTORIAL DE TICKETS</button>
+        <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("HistorialDeTickets", "Cliente")'">VER HISTORIAL DE TICKETS</button>
     </div>
 </div>

@@ -8,6 +8,21 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Sistema_de_tickets.styles.css" asp-append-version="true" />
     <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -23,19 +38,19 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 @*<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+                <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item">
+                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </li>
+                </ul>
                 </div>*@
             </div>
         </nav>
     </header>
-    <div class="container-fluid">
+    <div class="container-fluid content">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

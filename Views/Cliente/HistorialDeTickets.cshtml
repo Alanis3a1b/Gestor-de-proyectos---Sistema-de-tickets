@@ -1,8 +1,7 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var historialTickets = ViewData["HistorialTickets"] as IEnumerable<dynamic>;
 }
+
 <div class="container mt-5">
     <table class="table table-bordered">
         <!-- Primera fila -->
@@ -25,24 +24,25 @@
                 <th style="background-color: #c080c0;">ASUNTO</th>
                 <th style="background-color: #c080c0;">ESTADO</th>
                 <th style="background-color: #c080c0;">ASIGNADO A</th>
+                <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
             </tr>
         </thead>
 
         <!-- Filas siguientes generadas con datos de la base de datos -->
-        @* <tbody>
-        @* Aquí puedes utilizar un bucle para generar las filas dinámicamente a partir de los datos de la base de datos *@
-        @* @foreach (var ticket in Model.Tickets)*@
-        @*  {
-        <tr>
-        <td style="background-color: #c080c0;"></td>
-        <td>@ticket.Id</td>
-        <td>@ticket.LastUpdated</td>
-        <td>@ticket.User</td>
-        <td>@ticket.Subject</td>
-        <td>@ticket.Status</td>
-        <td>@ticket.AsignadoA</td>
-        </tr>
-        }
-        </tbody>*@
+        <tbody>
+            @foreach (var ticket in historialTickets)
+            {
+                <tr>
+                    <td style="background-color: #c080c0;"></td>
+                    <td>@ticket.id_ticket</td>
+                    <td>@ticket.fecha</td>
+                    <td>@ticket.Usuario</td>
+                    <td>@ticket.nombre_ticket</td>
+                    <td>@ticket.Estado</td>
+                    <td>@ticket.AsignadoA</td>
+                    <td><a href="@Url.Action("TicketTrabajado", "Cliente", new { id = ticket.id_ticket })">Detalles</a></td>
+                </tr>
+            }
+        </tbody>
     </table>
 </div>
