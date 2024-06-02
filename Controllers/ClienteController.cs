@@ -100,8 +100,13 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
 
-            return RedirectToAction("Formulario");
+            return RedirectToAction("Success");
 
+        }
+
+        public IActionResult Success()
+        {
+            return View();
         }
 
 
