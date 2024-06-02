@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "_LoginLayout";
+}
+
+<form asp-action="ValidarUsuario">
+    <!--Lineas para capturar la informacion-->
+    <div class="form-group row mt-5 pt-5 w-50">
+        <div class="col-sm-2">
+            <label>Usuario</label>
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBox("usuario", "", new{ @class = "form-control"})
+        </div>
+
+        <div class="col-sm-2">
+            <label>Contraseña</label>
+        </div>
+        <div class="col-sm-4">
+            @Html.TextBox("contrasenya", "", new { @class = "form-control" })
+        </div>
+    </div>
+
+    <!--Comprobacion por si hay algun mensaje enviado proveniente del backend-->
+    @if (ViewBag.Mensaje != " ")
+    {
+        <div ="alert alert-danger" role="alert">
+            @ViewBag.Mensaje
+        </div>
+    }
+
+    <input type="submit" class="btn btn-primary" value="Validar"/>
+</form>
