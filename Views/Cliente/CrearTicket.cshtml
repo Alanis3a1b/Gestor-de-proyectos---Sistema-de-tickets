@@ -17,49 +17,52 @@
             </p>
             <form asp-action="CrearTickets">
                 <div class="form-group">
-                    <label for="fullName" class="font-weight-bold">Nombre usuario <span style="color: red;">*</span></label>
-                    @* Tengo que hacer un listado que tome los nombres de los usuarios y los correos para agregarlos en esta parte *@
+                    <label for="email" class="font-weight-bold">Email usuario: <span style="color: red;">*</span></label>
+                    @* Tengo que hacer un listado que tome los correos para agregarlos en esta parte *@
                     @Html.DropDownList("id_usuario", ViewData["listadoDeUsuarios"] as SelectList, "--Sin usuario--", new { @class = "form-control" })
                 </div>
                 <div class="form-group">
-                    <label for="email" class="font-weight-bold">Email: <span style="color: red;">*</span></label>
-                    @* Aquí haré una condición donde dependiendo del usuario que tomó, automáticamente se rellenará el correo *@
-                      @{
-                            // var mensaje = "";
-                            // var User = "admin";
-                            // if (User == "admin")
-                            // {
-                            //     mensaje = "Administrador del sistema";
-                            // }
-                            // else
-                            // {
-                                
-                            // }
-                        }
+                    <label for="nombre_usuario" class="font-weight-bold">Nombre del usuario: <span style="color: red;">*</span></label>
+                    @Html.TextBox("nombre_usuario", "", new { @class = "form-control", placeholder = "Ingrese su nombre y apellido" })
+                </div>
+                <div class="form-group">
+                    <label for="telefono_usuario" class="font-weight-bold">Número de teléfono: <span style="color: red;">*</span></label>
+                    @Html.TextBox("telefono_usuario", "", new { @class = "form-control", placeholder = "Ingrese su numero de contacto" })
+                </div>
+                <div class="form-group">
+                    <label for="categoria" class="font-weight-bold">Categoría de su problematica: <span style="color: red;">*</span></label>
+                    @Html.DropDownList("id_categoria", ViewData["listadoDeCategorias"] as SelectList, "--Sin categoría--", new { @class = "form-control" })
+                </div>
+                <hr>
+                <div>
+                    <p class="font-weight-bold">
+                        Detalles de Ticket
+                    </p>
+                    <p>
+                        Por favor describa su problemática
+                    </p>
+                    <p class="font-weight-bold">
+                        Titulo del ticket
+                    </p>
+                    @Html.TextBox("nombre_ticket", "", new { @class = "form-control", placeholder = "Ingrese el título del ticket" })
+
+                </div>
+                <hr>
+                <!-- Text Editor Placeholder -->
+                <div class="form-group">
+                    <label for="ticketDescription" class="font-weight-bold">Descripción del ticket</label>
+                    @Html.TextArea("descripcion", "", new { id = "ticketDescription", @class = "form-control", rows = "5", @placeHolder = "Ingrese la descripción del ticket" })
+                </div>
+                <hr>
+                <div class="form-group row mb-4">
+                    <div class="col-sm-2"></div>
+                    <div class="d-flex justify-content-end">
+                        <input type="submit" class="btn btn-primary btn-lg small" value="CREAR TICKET" />
+                    </div>
                 </div>
             </form>
-            <hr>
-            <p class="font-weight-bold">
-                Detalles de Ticket
-            </p>
-            <p>
-                Por favor describa su problemática
-            </p>
-            <p class="font-weight-bold">
-                Titulo del ticket
-            </p>
-            <input type="text" class="form-control mb-3" id="ticketTitle" placeholder="Ingrese el título del ticket">
-
-            <!-- Text Editor Placeholder -->
-            <div class="form-group">
-                <label for="ticketDescription" class="font-weight-bold">Descripción del ticket</label>
-                <textarea class="form-control" id="ticketDescription" rows="5" placeholder="Ingrese la descripción del ticket"></textarea>
-            </div>
+             
         </div>
-    </div>
-
-    <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small">CREAR TICKET</button>
     </div>
 
 </div>

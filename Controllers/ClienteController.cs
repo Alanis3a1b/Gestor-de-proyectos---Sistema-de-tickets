@@ -28,7 +28,13 @@ namespace Sistema_de_tickets.Controllers
             //Aquí listaremos el listado de los clientes
             var listaDeUsuarios = (from m in _sistemadeticketsDBContext.usuarios
                                       select m).ToList();
-            ViewData["listadoDeUsuarios"] = new SelectList(listaDeUsuarios, "id_usuario", "nombre");
+            ViewData["listadoDeUsuarios"] = new SelectList(listaDeUsuarios, "id_usuario", "correo");
+
+            //Listado de categorias
+            var listaDeCategorias = (from e in _sistemadeticketsDBContext.categorias
+                                   select e).ToList();
+            ViewData["listadoDeCategorias"] = new SelectList(listaDeCategorias, "id_categoria", "nombre_categoria");
+
             return View();
         }
 

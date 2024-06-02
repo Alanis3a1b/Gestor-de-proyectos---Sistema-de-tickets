@@ -53,15 +53,18 @@ namespace Sistema_de_tickets.Models
         [Key]
         public int id_ticket { get; set; }
         public string nombre_ticket { get; set; }
+        public string nombre_usuario { get; set; }
+        public string telefono_usuario { get; set; }
         public string descripcion { get; set; }
-        public string url_archivo { get; set; }
+        public string? url_archivo { get; set; } = null;
+
         //Esto me creará las fechas de forma automática
         public DateTime fecha { get; set; } = DateTime.Now;
-        public string respuesta { get; set; }
-        public int id_prioridad { get; set; }
-        public int id_estado { get; set; }
+        public string? respuesta { get; set; } = string.Empty;
+        public int id_prioridad { get; set; } = 1;
+        public int id_estado { get; set; } = 1;
         public int id_usuario { get; set; }
-        public int id_categoria { get; set; }
+        public int id_categoria { get; set; } 
 
     }
 
@@ -70,6 +73,7 @@ namespace Sistema_de_tickets.Models
         [Key]
         public int id_notificacion { get; set; }
         public int id_ticket { get; set; }
+        public int id_usuario { get; set; }
         public DateTime fecha_envio { get; set; } = DateTime.Now;
 
     }
