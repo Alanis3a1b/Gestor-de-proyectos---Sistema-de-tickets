@@ -95,7 +95,7 @@ namespace Sistema_de_tickets.Controllers
                               AsignadoA = u.nombre,
                               correo_usuario = u.correo,
                               nombre = u.nombre,
-                              //telefono_usuario = u.telefono_usuario // Agrega el teléfono del usuario a la consulta
+                              telefono_usuario = t.telefono_usuario // Agrega el teléfono del usuario a la consulta
                           }).FirstOrDefault();
 
             if (ticket == null)
