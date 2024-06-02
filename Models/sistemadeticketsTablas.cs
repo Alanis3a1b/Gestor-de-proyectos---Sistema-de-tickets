@@ -56,13 +56,13 @@ namespace Sistema_de_tickets.Models
         public string nombre_usuario { get; set; }
         public string telefono_usuario { get; set; }
         public string descripcion { get; set; }
-        public string? url_archivo { get; set; } = null;
+        public string? url_archivo { get; set; }
 
         //Esto me creará las fechas de forma automática
         public DateTime fecha { get; set; } = DateTime.Now;
-        public string? respuesta { get; set; } = string.Empty;
-        public int id_prioridad { get; set; } = 1;
-        public int id_estado { get; set; } = 1;
+        public string? respuesta { get; set; } 
+        public int id_prioridad { get; set; }
+        public int id_estado { get; set; }
         public int id_usuario { get; set; }
         public int id_categoria { get; set; } 
 

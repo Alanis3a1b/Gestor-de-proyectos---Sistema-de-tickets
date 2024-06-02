@@ -60,6 +60,14 @@
                         <input type="submit" class="btn btn-primary btn-lg small" value="CREAR TICKET" />
                     </div>
                 </div>
+                <div>
+                    <!--Elementos estaticos de para la hora de crear tickets y que luego se modificaran al trabajarlos-->
+                    @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
+                    @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
+                    @Html.TextBox("id_prioridad", "1", new { @class = "form-control", type = "hidden" })
+                    @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
+                </div>
+                
             </form>
              
         </div>
