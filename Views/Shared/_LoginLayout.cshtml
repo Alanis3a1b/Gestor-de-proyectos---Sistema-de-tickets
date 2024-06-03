@@ -6,13 +6,33 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema de Tickets</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Sistema_de_tickets.styles.css" asp-append-version="true" />
     <title>@ViewBag.Title</title>
     <link rel="stylesheet" type="text/css" href="~/Content/Site.css" />
 </head>
+
+<!--Parte importante que luego se transportar[a al index de Inicio-->
 <body>
     <div>
         @RenderBody()
     </div>
+
+    <footer class="border-top footer text-muted py-4" style="background-color: #14053D;">
+        <div class="container-fluid text-light text-center">
+            Copyright &copy; 2024 - Todos los derechos reservados
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
+
+
 </html>
 
