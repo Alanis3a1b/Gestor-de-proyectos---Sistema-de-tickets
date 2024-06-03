@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
 using System.Text.Json;
 
@@ -16,9 +17,13 @@ namespace Sistema_de_tickets.Controllers
         }
         public IActionResult Index()
         {
+            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
+                                select m).ToList();
+            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+
             //Aqui recuperamos los datos de la variable de session hacia el objeto "datosUsuario"
-            if(HttpContext.Session.GetString("user") != null) 
-            { 
+            if (HttpContext.Session.GetString("user") != null)
+            {
                 var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
                 ViewBag.NombreUsuario = datosUsuario.usuario;
             }
@@ -26,13 +31,14 @@ namespace Sistema_de_tickets.Controllers
         }
 
         //Creo que aquí se debería poner el IF dependiendo que qué tipo de usuario se está validando
-        public IActionResult ValidarUsuario(credenciales credenciales) 
+        public IActionResult ValidarUsuario(credenciales credenciales)
         {
+           
             usuarios? usuario = (from user in _sistemadeticketsDBContext.usuarios
-                              where user.usuario == credenciales.usuario
-                              && user.contrasenya == credenciales.contrasenya
-                              select user).FirstOrDefault();
-            
+                                 where user.usuario == credenciales.usuario
+                                 && user.contrasenya == credenciales.contrasenya
+                                 select user).FirstOrDefault();
+
             //Si las credenciales no son correctas, saltara el mensaje de error
             if (usuario == null)
             {
@@ -42,10 +48,28 @@ namespace Sistema_de_tickets.Controllers
 
             //Si no da error, saltara a estas lineas de codigo
             string datoUsuario = JsonSerializer.Serialize(usuario);
-
             HttpContext.Session.SetString("user", datoUsuario);
-         
-            return RedirectToAction("Index", "Home");
+
+            //Comprobación de tipo de usuario al autenticar...
+            if (usuario.id_rol == 1)
+            {
+                HttpContext.Session.SetString("user", datoUsuario);
+                return RedirectToAction("HomeCliente", "Cliente");
+            }
+            if (usuario.id_rol == 2)
+            {
+                HttpContext.Session.SetString("user", datoUsuario);
+                return RedirectToAction("HomeAdmin", "Admin");
+            }
+            else
+            {
+                //Para los empleados (cuando tengan su propia vista...)
+                HttpContext.Session.SetString("user", datoUsuario);
+                return RedirectToAction("Index", "Home");
+            }
+
+            //Me redirige al Index de la carpeta Home, asi se hace para redirigir a otras vistas de diferentes carpetas
+            //return RedirectToAction("Index", "Home");
         }
     }
 }
