@@ -1,5 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization; 
+
 namespace Sistema_de_tickets.Models
 {
     public class sistemadeticketsTablas
@@ -14,6 +16,8 @@ namespace Sistema_de_tickets.Models
         public string nombre_rol { get; set; }
     }
 
+    //Se ocupara esta tabla para la autenticacion de los datos, a diferencia de la guia, 
+    //el modelado de la tabla de la bd se encuentra dentro de esta carpeta...
     public class usuarios
     {
         [Key]
@@ -22,6 +26,7 @@ namespace Sistema_de_tickets.Models
         public string correo { get; set; }
         public int id_rol { get; set; }
         public string usuario { get; set; }
+        [JsonIgnore]
         public string contrasenya { get; set; }
     }
 
