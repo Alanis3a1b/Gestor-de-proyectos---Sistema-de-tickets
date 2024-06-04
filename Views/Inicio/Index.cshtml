@@ -24,9 +24,9 @@
     </div>
 
     <!--Comprobacion por si hay algun mensaje enviado proveniente del backend-->
-    @if (ViewBag.Mensaje != " ")
+    @if (!string.IsNullOrEmpty(ViewBag.Mensaje))
     {
-        <div ="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert">
             @ViewBag.Mensaje
         </div>
     }

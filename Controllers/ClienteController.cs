@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
+
 
 //Controlador para la parte de los clientes
 namespace Sistema_de_tickets.Controllers
@@ -34,9 +36,16 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult HistorialDeTickets()
         {
+            if (HttpContext.Session.GetString("user") == null)
+            {
+                return RedirectToAction("Index", "Inicio");
+            }
+
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             var historialTickets = from t in _sistemadeticketsDBContext.tickets
                                    join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
                                    join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                                   where u.id_usuario == datosUsuario.id_usuario // Filtrar por usuario actual
                                    select new
                                    {
                                        t.id_ticket,
@@ -44,7 +53,7 @@ namespace Sistema_de_tickets.Controllers
                                        Usuario = u.usuario,
                                        t.nombre_ticket,
                                        Estado = e.nombre_estado,
-                                       AsignadoA = u.nombre 
+                                       AsignadoA = u.nombre
                                    };
 
             ViewData["HistorialTickets"] = historialTickets.ToList();
@@ -55,9 +64,11 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult HomeCliente()
         {
+            var usuarioSesion = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             var tickets = (from t in _sistemadeticketsDBContext.tickets
                            join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
                            join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                           where u.usuario == usuarioSesion.usuario
                            select new
                            {
                                t.id_ticket,
@@ -70,6 +81,7 @@ namespace Sistema_de_tickets.Controllers
             ViewBag.Tickets = tickets;
             return View();
         }
+
 
 
         public IActionResult Settings()
