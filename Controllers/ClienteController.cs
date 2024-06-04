@@ -21,15 +21,19 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult CrearTicket()
         {
-            //Aquí listaremos el listado de los clientes
+            // Aquí listaremos el listado de los clientes
             var listaDeUsuarios = (from m in _sistemadeticketsDBContext.usuarios
-                                      select m).ToList();
+                                   select m).ToList();
             ViewData["listadoDeUsuarios"] = new SelectList(listaDeUsuarios, "id_usuario", "correo");
 
-            //Listado de categorias
+            // Listado de categorías
             var listaDeCategorias = (from e in _sistemadeticketsDBContext.categorias
-                                   select e).ToList();
+                                     select e).ToList();
             ViewData["listadoDeCategorias"] = new SelectList(listaDeCategorias, "id_categoria", "nombre_categoria");
+
+            // Obtener los datos del usuario de la sesión
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            ViewBag.NombreUsuario = datosUsuario.nombre;
 
             return View();
         }
@@ -160,12 +164,17 @@ namespace Sistema_de_tickets.Controllers
         //(usuarios nuevoUsuario) ---> ("nombre tabla a meter datos" "variable")
         public IActionResult CrearTickets(tickets nuevoTicket)
         {
+            // Obtener los datos del usuario de la sesión
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            nuevoTicket.nombre_usuario = datosUsuario.nombre;
+            nuevoTicket.id_usuario = datosUsuario.id_usuario;
+
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
 
             return RedirectToAction("Success");
-
         }
+
 
 
 
