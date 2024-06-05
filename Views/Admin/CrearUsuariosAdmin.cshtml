@@ -4,3 +4,33 @@
 @{
 }
 
+<div class="container mt-5">
+    <div class="card mb-3">
+        <div class="card-header" style="background-color: #800080; color: white;">
+            GESTIONAR USUARIO
+        </div>
+        <div class="card-body" style="background-color: #d3d3d3; color: black;">
+            <p class="font-weight-bold" style="text-align: left;">
+                Por favor rellenar el formulario para abrir un nuevo ticket.
+            </p>
+            <hr>
+            <p class="font-weight-bold">
+                Información de contacto
+            </p>
+            <form asp-action="TrabajarTicketAdmin" method="post">
+                <div class="form-group">
+                    <label for="nombre_ticket" class="font-weight-bold">Ingrese el nuevo nombre del Ticket: <span style="color: red;">*</span></label>
+                    <input type="text" class="form-control" id="nombre_ticket" name="nombre_ticket" value="@ticket.nombre_ticket">
+                    @* @Html.TextBox("nombre_ticket", "Creoquealgoesta pasandoooo", new { @class = "form-control" }) *@
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <!-- Utiliza un botón de tipo "button" para evitar envíos de formulario -->
+                    <input type="submit" class="btn btn-primary btn-lg small" value="CREAR USUARIOS" />
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
