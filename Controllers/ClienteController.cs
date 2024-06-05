@@ -38,7 +38,7 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-        public IActionResult HistorialDeTickets()
+        public IActionResult HistorialDeTickets(string estado = "Todos")
         {
             if (HttpContext.Session.GetString("user") == null)
             {
@@ -49,7 +49,7 @@ namespace Sistema_de_tickets.Controllers
             var historialTickets = from t in _sistemadeticketsDBContext.tickets
                                    join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
                                    join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
-                                   where u.id_usuario == datosUsuario.id_usuario // Filtrar por usuario actual
+                                   where u.id_usuario == datosUsuario.id_usuario
                                    select new
                                    {
                                        t.id_ticket,
@@ -60,10 +60,26 @@ namespace Sistema_de_tickets.Controllers
                                        AsignadoA = u.nombre
                                    };
 
+            if (estado != "Todos")
+            {
+                historialTickets = historialTickets.Where(t => t.Estado == estado);
+            }
+
+            var estadosList = _sistemadeticketsDBContext.estados.ToList();
+            var selectOptions = estadosList
+                .Select(e => $"<option value=\"{e.nombre_estado}\" {(estado == e.nombre_estado ? "selected" : "")}>{e.nombre_estado}</option>")
+                .ToList();
+
+            selectOptions.Insert(0, $"<option value=\"Todos\" {(estado == "Todos" ? "selected" : "")}>Todos</option>");
+            ViewData["SelectOptions"] = string.Join("\n", selectOptions);
+
             ViewData["HistorialTickets"] = historialTickets.ToList();
+            ViewData["SelectedEstado"] = estado;
 
             return View();
         }
+
+
 
 
         public IActionResult HomeCliente()
@@ -174,8 +190,6 @@ namespace Sistema_de_tickets.Controllers
 
             return RedirectToAction("Success");
         }
-
-
 
 
         public IActionResult Success()

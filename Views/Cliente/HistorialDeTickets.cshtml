@@ -1,20 +1,22 @@
-﻿﻿@{
+﻿@{
     var historialTickets = ViewData["HistorialTickets"] as IEnumerable<dynamic>;
+    var selectOptions = ViewData["SelectOptions"] as string;
+    var selectedEstado = ViewData["SelectedEstado"] as string;
 }
 
 <div class="container mt-5">
     <table class="table table-bordered">
-        <!-- Primera fila -->
         <thead>
             <tr style="background-color: #800080; color: white;">
                 <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
                 <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
                     <span>BUSCAR POR ESTADO</span>
-                    <input type="text" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;" placeholder="Buscar">
+                    <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;">
+                        @Html.Raw(selectOptions)
+                    </select>
                 </th>
             </tr>
         </thead>
-        <!-- Segunda fila -->
         <thead>
             <tr style="color: black;">
                 <th style="background-color: #c080c0;"></th>
@@ -24,12 +26,10 @@
                 <th style="background-color: #c080c0;">ASUNTO</th>
                 <th style="background-color: #c080c0;">ESTADO</th>
                 <th style="background-color: #c080c0;">ASIGNADO A</th>
-                <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
+                <th style="background-color: #c080c0;"></th>
             </tr>
         </thead>
-
-        <!-- Filas siguientes generadas con datos de la base de datos -->
-        <tbody>
+        <tbody id="ticketsBody">
             @foreach (var ticket in historialTickets)
             {
                 <tr>
@@ -46,3 +46,13 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('estadoFilter').addEventListener('change', function () {
+            var selectedEstado = this.value;
+            var url = '@Url.Action("HistorialDeTickets", "Cliente")?estado=' + selectedEstado;
+            window.location.href = url;
+        });
+    </script>
+}

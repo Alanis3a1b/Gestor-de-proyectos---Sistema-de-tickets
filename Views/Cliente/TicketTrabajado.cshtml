@@ -37,17 +37,13 @@
                 <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
                 <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
             </div>
-
-            <!-- Utiliza un elemento <textarea> para permitir texto multi-línea -->
             <div class="form-group">
-                <label for="ticketDetails" class="font-weight-bold">Detalles del ticket:</label>
-                <textarea class="form-control" id="ticketDetails" rows="5" readonly>@ticket.descripcion</textarea>
+                <hr>
+                @Html.Raw(ticket.descripcion)
             </div>
         </div>
     </div>
-
     <div class="d-flex justify-content-end">
-        <!-- Utiliza un botón de tipo "button" para evitar envíos de formulario -->
         <button type="button" class="btn btn-primary btn-lg small" onclick="history.back()">REGRESAR</button>
     </div>
 </div>
