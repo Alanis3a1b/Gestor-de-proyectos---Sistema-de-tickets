@@ -11,7 +11,9 @@
                 <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
                 <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
                     <span>BUSCAR POR ESTADO</span>
-                    <input type="text" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;" placeholder="Buscar">
+                    <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;">
+                        @Html.Raw(ViewData["SelectOptions"])
+                    </select>
                 </th>
             </tr>
         </thead>
@@ -28,7 +30,6 @@
                 <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
             </tr>
         </thead>
-
         <!-- Filas siguientes generadas con datos de la base de datos de todos los tickets-->
         <tbody>
             @foreach (var ticket in todoslostickets)
@@ -50,3 +51,13 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('estadoFilter').addEventListener('change', function () {
+            var selectedEstado = this.value;
+            var url = '@Url.Action("TodosLosTickets", "Admin")?estado=' + selectedEstado;
+            window.location.href = url;
+        });
+    </script>
+}

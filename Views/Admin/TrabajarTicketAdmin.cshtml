@@ -1,7 +1,9 @@
 ﻿@{
     ViewBag.Title = "Trabajar Ticket Admin";
     var ticket = ViewData["Ticket"] as dynamic;
+}
 
+@functions {
     string GetPrioridadName(int id_prioridad)
     {
         switch (id_prioridad)
@@ -18,7 +20,6 @@
                 return "Desconocido";
         }
     }
-
 }
 
 <div class="container mt-5">
@@ -62,15 +63,16 @@
             </div>
             <div class="form-group">
                 <label for="respuesta" class="font-weight-bold">Respuesta:</label>
-                <textarea id="ticketDescription" name="ticketDescription" class="form-control">@Html.Raw(!string.IsNullOrEmpty(ticket.respuesta) ? ticket.respuesta : "Sin respuesta por el momento")</textarea>
+                <textarea id="respuesta" name="respuesta" class="form-control">@Html.Raw(!string.IsNullOrEmpty(ticket.respuesta) ? ticket.respuesta : "Sin respuesta por el momento")</textarea>
             </div>
             <div class="form-group">
-                <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label>
-                <select id="estadoCombo" class="form-control">
-                    <option value="1">Abierto</option>
-                    <option value="2">Cerrado</option>
-                    <option value="3">Resuelto</option>
-                </select>
+                <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label><br />
+                <input type="checkbox" id="abierto" name="abierto" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
+                <label for="abierto">Abierto</label><br />
+                <input type="checkbox" id="cerrado" name="cerrado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
+                <label for="cerrado">Cerrado</label><br />
+                <input type="checkbox" id="resuelto" name="resuelto" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
+                <label for="resuelto">Resuelto</label>
             </div>
         </div>
     </div>
@@ -84,10 +86,52 @@
     <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
     <script>
         tinymce.init({
-            selector: '#ticketDescription',
-            plugins: 'link',
-            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect | link',
+            selector: '#respuesta',
+            plugins: 'image imagetools media link codesample table',
+            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect',
         });
+
+        function uncheckOthers(checkbox) {
+            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(function (cb) {
+                if (cb !== checkbox) {
+                    cb.checked = false;
+                }
+            });
         }
+
+        function guardarCambios() {
+            // Obtener el valor de respuesta del editor TinyMCE
+            var respuesta = tinymce.get('respuesta').getContent();
+
+            var estado = 0;
+            var id_ticket = @ticket.id_ticket;
+
+            if (document.getElementById('abierto').checked) {
+                estado = 1;
+            } else if (document.getElementById('cerrado').checked) {
+                estado = 2;
+            } else if (document.getElementById('resuelto').checked) {
+                estado = 3;
+            }
+
+            // Aquí puedes hacer la llamada AJAX para actualizar el ticket en la base de datos
+            // Por ejemplo, usando jQuery
+            $.ajax({
+                url: '/Admin/GuardarCambios',
+                method: 'POST',
+                data: { id_ticket: id_ticket, respuesta: respuesta, id_estado: estado },
+                success: function (response) {
+                    // Aquí puedes manejar la respuesta del servidor
+                    console.log(response);
+                },
+                error: function (error) {
+                    // Aquí puedes manejar los errores de la llamada AJAX
+                    console.log(error);
+                }
+            });
+        }
+
+
     </script>
 }

@@ -5,19 +5,17 @@ using Sistema_de_tickets.Models;
 using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
-using System.Text.Json;
 
 namespace Sistema_de_tickets.Controllers
 {
     public class AdminController : Controller
     {
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration)
+        public AdminController(sistemadeticketsDBContext sistemadeticketsDBContext, IConfiguration configuration)
         {
-            _sistemadeticketsDBContext = sistemadeticketsDbContext;
+            _sistemadeticketsDBContext = sistemadeticketsDBContext;
             _configuration = configuration;
         }
 
@@ -25,10 +23,10 @@ namespace Sistema_de_tickets.Controllers
         {
             return View();
         }
-        //Ver todos los tickets existentes
-        public IActionResult TodosLosTickets()
+
+        public IActionResult TodosLosTickets(string estado = "Todos")
         {
-            var todoslostickets = from t in _sistemadeticketsDBContext.tickets
+            var todoslosTickets = from t in _sistemadeticketsDBContext.tickets
                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
                                   select new
@@ -41,27 +39,47 @@ namespace Sistema_de_tickets.Controllers
                                       AsignadoA = u.nombre
                                   };
 
-            ViewData["TodosLosTickets"] = todoslostickets.ToList();
+            if (estado != "Todos")
+            {
+                todoslosTickets = todoslosTickets.Where(t => t.Estado == estado);
+            }
+
+            var estadosList = _sistemadeticketsDBContext.estados.ToList();
+            var selectOptions = estadosList
+                .Select(e => $"<option value=\"{e.nombre_estado}\" {(estado == e.nombre_estado ? "selected" : "")}>{e.nombre_estado}</option>")
+                .ToList();
+
+            selectOptions.Insert(0, $"<option value=\"Todos\" {(estado == "Todos" ? "selected" : "")}>Todos</option>");
+            ViewData["SelectOptions"] = string.Join("\n", selectOptions);
+
+            ViewData["TodosLosTickets"] = todoslosTickets.ToList();
+            ViewData["SelectedEstado"] = estado;
 
             return View();
         }
-        // 
+
+
+
+        /*.
+        [HttpGet]
         public IActionResult TrabajarTicketAdmin(int id)
         {
-            var ticket = _sistemadeticketsDBContext.tickets.Find(id);
+            var ticket = _sistemadeticketsDBContext.tickets
+                .Include(t => t.id_estado)
+                .FirstOrDefault(t => t.id_ticket == id);
+
             if (ticket == null)
             {
                 return NotFound();
             }
 
-            ViewBag.Estados = _sistemadeticketsDBContext.estados.ToList();
+            var estados = _sistemadeticketsDBContext.estados.ToList();
+            ViewData["Estados"] = estados;
 
-            ViewData["Ticket"] = ticket;
+            return View(ticket);
+        }*/
 
-            return View();
-        }
-
-        // Funciona para extraer la info del ticket a trabajar
+        //Al dar clic en un ticket, abre la vista para trabajar este ticket.
         public IActionResult TicketTrabajado(int id)
         {
             var ticket = (from t in _sistemadeticketsDBContext.tickets
@@ -92,26 +110,29 @@ namespace Sistema_de_tickets.Controllers
             }
 
             ViewData["Ticket"] = ticket;
-
             return View("TrabajarTicketAdmin");
         }
 
-        //Para guardar cambios en el ticket, aun no funciona
-        public IActionResult GuardarCambios(int id, int id_estado, string respuesta)
+        [HttpPost]
+        public IActionResult GuardarCambios(int id_ticket, string respuesta, int id_estado)
         {
-            var ticket = _sistemadeticketsDBContext.tickets.Find(id);
-            if (ticket == null)
+            var ticketActual = _sistemadeticketsDBContext.tickets.FirstOrDefault(t => t.id_ticket == id_ticket);
+
+            if (ticketActual == null)
             {
                 return NotFound();
             }
 
-            ticket.id_estado = id_estado;
-            ticket.respuesta = respuesta;
+            ticketActual.respuesta = respuesta;
+            ticketActual.id_prioridad = id_estado;
 
             _sistemadeticketsDBContext.SaveChanges();
 
-            return RedirectToAction("TrabajarTicketAdmin", new { id = id });
+            return RedirectToAction("TicketEditado");
         }
+
+
+
 
         private bool TicketExists(int id)
         {
@@ -121,30 +142,75 @@ namespace Sistema_de_tickets.Controllers
         public IActionResult CrearUsuariosAdmin()
         {
             var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
-                                   select m).ToList();
+                                select m).ToList();
             ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
 
             return View();
         }
 
-        public IActionResult CrearUsuariossAdmin(usuarios usuarioNuevo)
+        [HttpPost]
+        public IActionResult CrearUsuariosAdmin(usuarios usuarioNuevo)
         {
             correo enviarCorreo = new correo(_configuration);
             _sistemadeticketsDBContext.Add(usuarioNuevo);
             _sistemadeticketsDBContext.SaveChanges();
             enviarCorreo.enviar(usuarioNuevo.correo,
-                                "Cuenta para acceder a HELPHUB",
-                                "Se le ha asignado una nueva cuenta cuyo nombre de cuenta es: " + usuarioNuevo.usuario + "\n"
-                                + " Y su contraseña es:  " + usuarioNuevo.contrasenya + "\n"
-                                + " La contraseña la puede cambiar ingresando a su cuenta e ingresando luego a su perfil.");
+                                "Bienvenido al sistema de tickets",
+                                "Su usuario ha sido creado exitosamente.");
 
-            return RedirectToAction("Success");
+            return RedirectToAction("HomeAdmin");
         }
 
-        public IActionResult Success()
+        public IActionResult EditarUsuarioAdmin(int id)
+        {
+            var usuario = _sistemadeticketsDBContext.usuarios.Find(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
+                                select m).ToList();
+            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+
+            return View(usuario);
+        }
+
+        [HttpPost]
+        public IActionResult EditarUsuarioAdmin(usuarios usuarioActualizado)
+        {
+            if (!ModelState.IsValid)
+            {
+                var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
+                                    select m).ToList();
+                ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+
+                return View(usuarioActualizado);
+            }
+
+            _sistemadeticketsDBContext.Update(usuarioActualizado);
+            _sistemadeticketsDBContext.SaveChanges();
+
+            return RedirectToAction("HomeAdmin");
+        }
+
+        public IActionResult EliminarUsuarioAdmin(int id)
+        {
+            var usuario = _sistemadeticketsDBContext.usuarios.Find(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            _sistemadeticketsDBContext.usuarios.Remove(usuario);
+            _sistemadeticketsDBContext.SaveChanges();
+
+            return RedirectToAction("HomeAdmin");
+        }
+
+        public IActionResult TicketEditado()
         {
             return View();
         }
-
     }
 }
