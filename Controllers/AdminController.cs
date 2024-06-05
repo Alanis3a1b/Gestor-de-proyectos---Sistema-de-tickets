@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Sistema_de_tickets.Models;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text.Json;
 
 namespace Sistema_de_tickets.Controllers
@@ -40,9 +43,34 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-        public IActionResult TrabajarTicketAdmin()
+        //Trabajar tickets (aun no funciona...)
+        public IActionResult TrabajarTicketAdmin(int id, [FromForm] tickets ticketModificar)
         {
+            // seleccionar el ticket
+            tickets? ticketActual = (from e in _sistemadeticketsDBContext.tickets
+                                where e.id_ticket == id
+                                select e).FirstOrDefault();
+
+            ViewData["Ticket"] = ticketActual;
+
+            if (ticketActual == null)
+            { return NotFound(); }
+
+            //Datos a modificar para trabajar los tickets
+            //ticketActual.nombre_ticket = ticketModificar.nombre_ticket;
+            //ticketActual.fecha = ticketModificar.fecha;
+            //ticketActual.respuesta = ticketModificar.respuesta;
+            //ticketActual.id_prioridad = ticketModificar.id_prioridad;
+            //ticketActual.id_estado = ticketModificar.id_estado;
+            //ticketActual.id_categoria = ticketModificar.id_categoria;
+
+            _sistemadeticketsDBContext.Entry(ticketActual).State = EntityState.Modified;
+            _sistemadeticketsDBContext.SaveChanges();
+
+            //return Ok(ticketModificar);
             return View();
+            //return RedirectToAction("TodosLosTickets");
+
         }
 
     }
