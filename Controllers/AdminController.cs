@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_de_tickets.Models;
+using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
@@ -14,9 +15,13 @@ namespace Sistema_de_tickets.Controllers
         //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
 
-        public AdminController(sistemadeticketsDBContext sistemadeticketsDbContext)
+        //Este método me permite enviar correos
+        private IConfiguration _configuration;
+
+        public AdminController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
+            _configuration = configuration;
         }
         public IActionResult HomeAdmin()
         {
@@ -88,7 +93,21 @@ namespace Sistema_de_tickets.Controllers
 
 
 
-        public IActionResult CrearUsuariosAdmin()
+        public IActionResult CrearUsuariosAdmin(usuarios usuarioNuevo)
+        {
+            correo enviarCorreo = new correo(_configuration);
+            _sistemadeticketsDBContext.Add(usuarioNuevo);
+            _sistemadeticketsDBContext.SaveChanges();
+            enviarCorreo.enviar(usuarioNuevo.correo,
+                                "Cuenta para acceder a HELPHUB",
+                                "Se le ha asignado una nueva cuenta cuyo nombre de cuenta es: " + usuarioNuevo.usuario + "\n"
+                                + " Y su contraseña es:  " + usuarioNuevo.contrasenya + "\n"
+                                + " La contraseña la puede cambiar ingresando a su cuenta e ingresando luego a su perfil.");
+
+            return RedirectToAction("Success");
+        }
+
+        public IActionResult Success()
         {
             return View();
         }
