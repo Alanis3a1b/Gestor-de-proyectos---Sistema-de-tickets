@@ -11,12 +11,9 @@
         </div>
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
             <p class="font-weight-bold" style="text-align: left;">
-                Por favor rellenar el formulario para abrir un nuevo ticket.
+                CREAR NUEVO USUARIO
             </p>
             <hr>
-            <p class="font-weight-bold">
-                Información de contacto
-            </p>
             <form asp-action="CrearUsuariossAdmin">
                 <div class="form-group">
                     <label for="nombre_ticket" class="font-weight-bold">Ingrese el nombre del usuario: <span style="color: red;">*</span></label>
@@ -32,7 +29,26 @@
                     <label for="rol" class="font-weight-bold">Seleccione el tipo de usuario a crear: <span style="color: red;">*</span></label>
                     @Html.DropDownList("id_rol", ViewData["listadoDeRoles"] as SelectList, "--Sin rol--", new { @class = "form-control" })
                 </div>
-
+                <hr>
+                <!--Este espacio solo lo debe de llenar si se eligi[o el tipo cliente en roles-->
+                <div>
+                    <div class="form-group">
+                        <p class="font-weight-bold" style="text-align: left;">
+                            Si el tipo de usuario que eligió fue "Cliente", edite los siguientes datos...
+                        </p>
+                        <label for="usuario" class="font-weight-bold"> Nombre de la empresa: <span style="color: red;">*</span></label>
+                        @Html.TextBox("nombre_empresa", "HELPHUB", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario" class="font-weight-bold">Nombre del contacto principal de la empresa: <span style="color: red;">*</span></label>
+                        @Html.TextBox("contacto_principal", "Alanis Álvarez", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label for="usuario" class="font-weight-bold">Teléfono : <span style="color: red;">*</span></label>
+                        @Html.TextBox("telefono_contacto", "76296432", new { @class = "form-control" })
+                    </div>
+                </div>
+                <hr>
                 <div class="form-group">
                     <label for="usuario" class="font-weight-bold">Ingrese el usuario con el que se autenticará (No mayor de 10 caracteres): <span style="color: red;">*</span></label>
                     @Html.TextBox("usuario", "", new { @class = "form-control" })

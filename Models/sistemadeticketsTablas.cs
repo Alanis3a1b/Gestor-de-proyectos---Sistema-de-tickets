@@ -25,6 +25,9 @@ namespace Sistema_de_tickets.Models
         public string nombre { get; set; }
         public string correo { get; set; }
         public int id_rol { get; set; }
+        public string nombre_empresa { get; set; }
+        public string contacto_principal { get; set; }
+        public string telefono_contacto { get; set; }
         public string usuario { get; set; }
         [JsonIgnore]
         public string contrasenya { get; set; }
