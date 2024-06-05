@@ -43,6 +43,22 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
+        public IActionResult TrabajarTicketAdmin(int id)
+        {
+            var ticket = _sistemadeticketsDBContext.tickets.Find(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.Estados = _sistemadeticketsDBContext.estados.ToList();
+
+            ViewData["Ticket"] = ticket;
+
+            return View();
+        }
+
+
         //Trabajar tickets (aun no funciona...)
         public IActionResult TicketTrabajado(int id)
         {
@@ -63,10 +79,10 @@ namespace Sistema_de_tickets.Controllers
                               correo_usuario = u.correo,
                               nombre = u.nombre,
                               telefono_usuario = t.telefono_usuario,
-                              id_estado = t.id_estado, // Agrega el id_estado a la consulta
-                              id_prioridad = t.id_prioridad // Agrega el id_prioridad a la consulta
+                              id_estado = t.id_estado,
+                              id_prioridad = t.id_prioridad,
+                              respuesta = t.respuesta // Agrega la propiedad respuesta a la consulta
                           }).FirstOrDefault();
-
 
             if (ticket == null)
             {
@@ -76,6 +92,23 @@ namespace Sistema_de_tickets.Controllers
             ViewData["Ticket"] = ticket;
 
             return View("TrabajarTicketAdmin");
+        }
+
+
+        public IActionResult GuardarCambios(int id, int id_estado, string respuesta)
+        {
+            var ticket = _sistemadeticketsDBContext.tickets.Find(id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            ticket.id_estado = id_estado;
+            ticket.respuesta = respuesta;
+
+            _sistemadeticketsDBContext.SaveChanges();
+
+            return RedirectToAction("TrabajarTicketAdmin", new { id = id });
         }
 
 

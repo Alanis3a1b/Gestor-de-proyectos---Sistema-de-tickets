@@ -1,6 +1,24 @@
 ﻿@{
     ViewBag.Title = "Trabajar Ticket Admin";
     var ticket = ViewData["Ticket"] as dynamic;
+
+    string GetPrioridadName(int id_prioridad)
+    {
+        switch (id_prioridad)
+        {
+            case 1:
+                return "Normal";
+            case 2:
+                return "Media";
+            case 3:
+                return "Alta";
+            case 4:
+                return "Crítico";
+            default:
+                return "Desconocido";
+        }
+    }
+
 }
 
 <div class="container mt-5">
@@ -38,21 +56,69 @@
                 <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
             </div>
             <div class="form-group">
-                <hr>
-                @Html.Raw(ticket.descripcion)
-            </div>
-            <div class="form-group">
                 <label for="estado" class="font-weight-bold">Estado:</label>
                 <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>
             </div>
             <div class="form-group">
                 <label for="prioridad" class="font-weight-bold">Prioridad:</label>
-                <input type="text" class="form-control" id="prioridad" value="@ticket.id_prioridad" readonly>
+                <input type="text" class="form-control" id="prioridad" value="@GetPrioridadName(ticket.id_prioridad)" readonly>
             </div>
-
+            <div class="form-group">
+                <label for="respuesta" class="font-weight-bold">Respuesta:</label>
+                <textarea id="ticketDescription" name="ticketDescription" class="form-control">@Html.Raw(!string.IsNullOrEmpty(ticket.respuesta) ? ticket.respuesta : "Sin respuesta por el momento")</textarea>
+            </div>
+            <div class="form-group">
+                <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label>
+                <select id="estadoCombo" class="form-control">
+                    <option value="1">Abierto</option>
+                    <option value="2">Cerrado</option>
+                    <option value="3">Resuelto</option>
+                </select>
+            </div>
         </div>
     </div>
     <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small" onclick="history.back()">REGRESAR</button>
+        <button type="button" class="btn btn-primary btn-lg small" onclick="guardarCambios()">Guardar Cambios</button>
+        <button type="button" class="btn btn-secondary btn-lg small ml-2" onclick="history.back()">REGRESAR</button>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#ticketDescription',
+            plugins: 'link',
+            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect | link',
+        });
+
+        function guardarCambios() {
+            var id = @ticket.id_ticket;
+            var id_estado = document.getElementById("estadoCombo").value;
+            var respuesta = document.getElementById("ticketDescription").value;
+
+            // Realizar la solicitud POST al controlador para guardar los cambios
+            fetch('@Url.Action("GuardarCambios", "Admin")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id,
+                    id_estado: id_estado,
+                    respuesta: respuesta
+                })
+            }).then(response => {
+                if (response.ok) {
+                    alert("Cambios guardados correctamente");
+                    window.location.reload();
+                } else {
+                    alert("Error al guardar cambios");
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert("Error al guardar cambios");
+            });
+        }
+    </script>
+}
