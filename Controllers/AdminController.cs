@@ -44,34 +44,49 @@ namespace Sistema_de_tickets.Controllers
         }
 
         //Trabajar tickets (aun no funciona...)
-        public IActionResult TrabajarTicketAdmin(int id, [FromForm] tickets ticketModificar)
+        public IActionResult TicketTrabajado(int id)
         {
-            // seleccionar el ticket
-            tickets? ticketActual = (from e in _sistemadeticketsDBContext.tickets
-                                where e.id_ticket == id
-                                select e).FirstOrDefault();
+            var ticket = (from t in _sistemadeticketsDBContext.tickets
+                          join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          join p in _sistemadeticketsDBContext.prioridad on t.id_prioridad equals p.id_prioridad
+                          where t.id_ticket == id
+                          select new
+                          {
+                              t.id_ticket,
+                              t.fecha,
+                              Usuario = u.usuario,
+                              t.nombre_ticket,
+                              t.descripcion,
+                              Estado = e.nombre_estado,
+                              AsignadoA = u.nombre,
+                              correo_usuario = u.correo,
+                              nombre = u.nombre,
+                              telefono_usuario = t.telefono_usuario,
+                              id_estado = t.id_estado, // Agrega el id_estado a la consulta
+                              id_prioridad = t.id_prioridad // Agrega el id_prioridad a la consulta
+                          }).FirstOrDefault();
 
-            ViewData["Ticket"] = ticketActual;
 
-            if (ticketActual == null)
-            { return NotFound(); }
+            if (ticket == null)
+            {
+                return NotFound();
+            }
 
-            //Datos a modificar para trabajar los tickets
-            //ticketActual.nombre_ticket = ticketModificar.nombre_ticket;
-            //ticketActual.fecha = ticketModificar.fecha;
-            //ticketActual.respuesta = ticketModificar.respuesta;
-            //ticketActual.id_prioridad = ticketModificar.id_prioridad;
-            //ticketActual.id_estado = ticketModificar.id_estado;
-            //ticketActual.id_categoria = ticketModificar.id_categoria;
+            ViewData["Ticket"] = ticket;
 
-            _sistemadeticketsDBContext.Entry(ticketActual).State = EntityState.Modified;
-            _sistemadeticketsDBContext.SaveChanges();
-
-            //return Ok(ticketModificar);
-            return View();
-            //return RedirectToAction("TodosLosTickets");
-
+            return View("TrabajarTicketAdmin");
         }
+
+
+
+
+        private bool TicketExists(int id)
+        {
+            return _sistemadeticketsDBContext.tickets.Any(t => t.id_ticket == id);
+        }
+
+
 
         public IActionResult CrearUsuariosAdmin()
         {

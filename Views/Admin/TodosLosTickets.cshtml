@@ -43,7 +43,8 @@
                     <td>@ticket.AsignadoA</td>
                     <!--Aquí me redirijirá dependiento del ticket a la parte para trabajarlo donde de una mando el ID del ticket a trabajar-->
                     <!--"TrabajarTicketAdmin" es la vista especifica y "Admin" es la carpeta de las vistas-->
-                    <td><a href="@Url.Action("TrabajarTicketAdmin", "Admin", new { id = ticket.id_ticket })">Trabajar</a></td>
+                    <td><a href="@Url.Action("TicketTrabajado", "Admin", new { id = ticket.id_ticket })">Trabajar</a></td>
+
                 </tr>
             }
         </tbody>

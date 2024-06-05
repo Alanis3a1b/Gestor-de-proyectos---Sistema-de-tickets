@@ -70,6 +70,7 @@ namespace Sistema_de_tickets.Models
         public int id_estado { get; set; }
         public int id_usuario { get; set; }
         public int id_categoria { get; set; } 
+        public int id_usuario_asignado { get; set; }
 
     }
 
