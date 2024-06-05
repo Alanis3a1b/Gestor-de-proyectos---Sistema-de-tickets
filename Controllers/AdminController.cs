@@ -28,6 +28,7 @@ namespace Sistema_de_tickets.Controllers
         {
             var todoslosTickets = from t in _sistemadeticketsDBContext.tickets
                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                                  join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario
                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
                                   select new
                                   {
@@ -36,7 +37,7 @@ namespace Sistema_de_tickets.Controllers
                                       Usuario = u.usuario,
                                       t.nombre_ticket,
                                       Estado = e.nombre_estado,
-                                      AsignadoA = u.nombre
+                                      AsignadoA = ua.nombre
                                   };
 
             if (estado != "Todos")
@@ -57,27 +58,6 @@ namespace Sistema_de_tickets.Controllers
 
             return View();
         }
-
-
-
-        /*.
-        [HttpGet]
-        public IActionResult TrabajarTicketAdmin(int id)
-        {
-            var ticket = _sistemadeticketsDBContext.tickets
-                .Include(t => t.id_estado)
-                .FirstOrDefault(t => t.id_ticket == id);
-
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-
-            var estados = _sistemadeticketsDBContext.estados.ToList();
-            ViewData["Estados"] = estados;
-
-            return View(ticket);
-        }*/
 
         //Al dar clic en un ticket, abre la vista para trabajar este ticket.
         public IActionResult TicketTrabajado(int id)
@@ -109,12 +89,16 @@ namespace Sistema_de_tickets.Controllers
                 return NotFound();
             }
 
+            var usuarios = _sistemadeticketsDBContext.usuarios.ToList();
+            ViewBag.Usuarios = usuarios;
+
             ViewData["Ticket"] = ticket;
             return View("TrabajarTicketAdmin");
         }
 
+
         [HttpPost]
-        public IActionResult GuardarCambios(int id_ticket, string respuesta, int id_estado)
+        public IActionResult GuardarCambios(int id_ticket, string respuesta, int id_estado, int id_prioridad, int id_usuario_asignado)
         {
             var ticketActual = _sistemadeticketsDBContext.tickets.FirstOrDefault(t => t.id_ticket == id_ticket);
 
@@ -124,12 +108,15 @@ namespace Sistema_de_tickets.Controllers
             }
 
             ticketActual.respuesta = respuesta;
-            ticketActual.id_prioridad = id_estado;
+            ticketActual.id_estado = id_estado;
+            ticketActual.id_prioridad = id_prioridad;
+            ticketActual.id_usuario_asignado = id_usuario_asignado;
 
             _sistemadeticketsDBContext.SaveChanges();
 
             return RedirectToAction("TicketEditado");
         }
+
 
 
 

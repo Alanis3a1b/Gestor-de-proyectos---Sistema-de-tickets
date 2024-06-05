@@ -28,7 +28,6 @@
             TICKET # @ticket.id_ticket
         </div>
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
-            <hr>
             <p class="font-weight-bold">
                 Información de contacto
             </p>
@@ -57,22 +56,46 @@
                 <label for="estado" class="font-weight-bold">Estado:</label>
                 <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>
             </div>
+            @*Prioridad*@
             <div class="form-group">
-                <label for="prioridad" class="font-weight-bold">Prioridad:</label>
-                <input type="text" class="form-control" id="prioridad" value="@GetPrioridadName(ticket.id_prioridad)" readonly>
+                <label for="prioridad" class="font-weight-bold">Prioridad:</label><br />
+                <input type="radio" id="normal" name="prioridad" value="1" @(ticket.id_prioridad == 1 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                <label for="normal">Normal</label><br />
+                <input type="radio" id="media" name="prioridad" value="2" @(ticket.id_prioridad == 2 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                <label for="media">Media</label><br />
+                <input type="radio" id="alta" name="prioridad" value="3" @(ticket.id_prioridad == 3 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                <label for="alta">Alta</label><br />
+                <input type="radio" id="critico" name="prioridad" value="4" @(ticket.id_prioridad == 4 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                <label for="critico">Crítico</label>
             </div>
+
             <div class="form-group">
                 <label for="respuesta" class="font-weight-bold">Respuesta:</label>
                 <textarea id="respuesta" name="respuesta" class="form-control">@Html.Raw(!string.IsNullOrEmpty(ticket.respuesta) ? ticket.respuesta : "Sin respuesta por el momento")</textarea>
             </div>
+            @*Estado*@
             <div class="form-group">
                 <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label><br />
-                <input type="checkbox" id="abierto" name="abierto" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
+                <input type="radio" id="abierto" name="estado" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="abierto">Abierto</label><br />
-                <input type="checkbox" id="cerrado" name="cerrado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
+                <input type="radio" id="En espera de información del cliente" name="estado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
+                <label for="cerrado">En espera de información del cliente</label><br />
+                <input type="radio" id="cerrado" name="estado" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="cerrado">Cerrado</label><br />
-                <input type="checkbox" id="resuelto" name="resuelto" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
+                <input type="radio" id="resuelto" name="estado" value="4" @(ticket.id_estado == 4 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="resuelto">Resuelto</label>
+
+            </div>
+            @*Asignar Usuario*@
+            <div class="form-group">
+                <label for="usuarioAsignado" class="font-weight-bold">Asignar a usuario:</label>
+                <select id="usuarioAsignado" name="usuarioAsignado" class="form-control">
+                    <option value="">Seleccionar usuario</option>
+                    @foreach (var usuario in ViewBag.Usuarios)
+                    {
+                        <option value="@usuario.id_usuario">@usuario.nombre</option>
+                    }
+                </select>
             </div>
         </div>
     </div>
@@ -82,23 +105,34 @@
     </div>
 </div>
 
-@section Scripts {
-    <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: '#respuesta',
-            plugins: 'image imagetools media link codesample table',
-            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect',
-        });
+    @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        function uncheckOthers(checkbox) {
-            var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function (cb) {
-                if (cb !== checkbox) {
-                    cb.checked = false;
-                }
+        <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
+        <script>
+            tinymce.init({
+                selector: '#respuesta',
+                plugins: 'image imagetools media link codesample table',
+                toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect',
             });
-        }
+
+            function uncheckOthers(checkbox) {
+                var checkboxes = document.querySelectorAll('input[name="estado"]');
+                checkboxes.forEach(function (cb) {
+                    if (cb !== checkbox) {
+                        cb.checked = false;
+                    }
+                });
+            }
+
+            function uncheckOthersPrioridad(checkbox) {
+                    var checkboxes = document.querySelectorAll('input[name="prioridad"]');
+                    checkboxes.forEach(function (cb) {
+                        if (cb !== checkbox) {
+                            cb.checked = false;
+                        }
+                    });
+                }
 
         function guardarCambios() {
             // Obtener el valor de respuesta del editor TinyMCE
@@ -106,24 +140,33 @@
 
             var estado = 0;
             var id_ticket = @ticket.id_ticket;
+            var prioridad = 0;
+            var id_usuario_asignado = document.getElementById('usuarioAsignado').value;
 
-            if (document.getElementById('abierto').checked) {
-                estado = 1;
-            } else if (document.getElementById('cerrado').checked) {
-                estado = 2;
-            } else if (document.getElementById('resuelto').checked) {
-                estado = 3;
-            }
+            var estadoRadios = document.querySelectorAll('input[name="estado"]');
+            estadoRadios.forEach(function (radio) {
+                if (radio.checked) {
+                    estado = parseInt(radio.value);
+                }
+            });
+
+            var prioridadRadios = document.querySelectorAll('input[name="prioridad"]');
+            prioridadRadios.forEach(function (radio) {
+                if (radio.checked) {
+                    prioridad = parseInt(radio.value);
+                }
+            });
 
             // Aquí puedes hacer la llamada AJAX para actualizar el ticket en la base de datos
             // Por ejemplo, usando jQuery
             $.ajax({
                 url: '/Admin/GuardarCambios',
                 method: 'POST',
-                data: { id_ticket: id_ticket, respuesta: respuesta, id_estado: estado },
+                data: { id_ticket: id_ticket, respuesta: respuesta, id_estado: estado, id_prioridad: prioridad, id_usuario_asignado: id_usuario_asignado },
                 success: function (response) {
                     // Aquí puedes manejar la respuesta del servidor
                     console.log(response);
+                    window.location.href = '/Admin/TicketEditado'; // Redirigir a la vista TicketEditado
                 },
                 error: function (error) {
                     // Aquí puedes manejar los errores de la llamada AJAX
@@ -133,5 +176,5 @@
         }
 
 
-    </script>
-}
+        </script>
+    }
