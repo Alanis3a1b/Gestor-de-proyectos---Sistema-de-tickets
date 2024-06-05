@@ -118,7 +118,16 @@ namespace Sistema_de_tickets.Controllers
             return _sistemadeticketsDBContext.tickets.Any(t => t.id_ticket == id);
         }
 
-        public IActionResult CrearUsuariosAdmin(usuarios usuarioNuevo)
+        public IActionResult CrearUsuariosAdmin()
+        {
+            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
+                                   select m).ToList();
+            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+
+            return View();
+        }
+
+        public IActionResult CrearUsuariossAdmin(usuarios usuarioNuevo)
         {
             correo enviarCorreo = new correo(_configuration);
             _sistemadeticketsDBContext.Add(usuarioNuevo);

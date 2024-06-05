@@ -21,8 +21,8 @@ namespace Sistema_de_tickets.Views.Services
                 string sqlQuery = "exec msdb.dbo.sp_send_dbmail " +
                    "                 @profile_name = 'SQLMail_CATOLICA', " +
                    "                 @recipients = @par_destinatarios, " +
-                   "                 @body = @par_asunto, " +
-                   "                 @subject = @par_mensaje ";
+                   "                 @subject = @par_asunto, " +
+                   "                 @body = @par_mensaje ";
 
                 //COn esto ya configurado, es de usar la clase y el metodo en el controlador o metodo en donde querramos implementarlo
                 using (SqlConnection connection = new SqlConnection(connectionString)) 
