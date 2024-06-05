@@ -73,5 +73,10 @@ namespace Sistema_de_tickets.Controllers
 
         }
 
+        public IActionResult CrearUsuariosAdmin()
+        {
+            return View();
+        }
+
     }
 }
