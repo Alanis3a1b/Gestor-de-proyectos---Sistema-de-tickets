@@ -28,7 +28,8 @@ namespace Sistema_de_tickets.Controllers
         {
             var todoslosTickets = from t in _sistemadeticketsDBContext.tickets
                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
-                                  join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario
+                                  join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario into uag
+                                  from ua in uag.DefaultIfEmpty()
                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
                                   select new
                                   {
@@ -37,7 +38,7 @@ namespace Sistema_de_tickets.Controllers
                                       Usuario = u.usuario,
                                       t.nombre_ticket,
                                       Estado = e.nombre_estado,
-                                      AsignadoA = ua.nombre
+                                      AsignadoA = ua != null ? ua.nombre : "Sin asignar"
                                   };
 
             if (estado != "Todos")
@@ -89,13 +90,16 @@ namespace Sistema_de_tickets.Controllers
                 return NotFound();
             }
 
-            var usuarios = _sistemadeticketsDBContext.usuarios.ToList();
+            // Filtra usuarios con id_rol mayor a 1 para excluir clientes
+            var usuarios = _sistemadeticketsDBContext.usuarios
+                            .Where(u => u.id_rol > 1)
+                            .ToList();
+
             ViewBag.Usuarios = usuarios;
 
             ViewData["Ticket"] = ticket;
             return View("TrabajarTicketAdmin");
         }
-
 
         [HttpPost]
         public IActionResult GuardarCambios(int id_ticket, string respuesta, int id_estado, int id_prioridad, int id_usuario_asignado)
@@ -116,10 +120,6 @@ namespace Sistema_de_tickets.Controllers
 
             return RedirectToAction("TicketEditado");
         }
-
-
-
-
 
         private bool TicketExists(int id)
         {

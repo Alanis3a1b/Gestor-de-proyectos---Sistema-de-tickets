@@ -52,6 +52,13 @@
                 <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
                 <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
             </div>
+            <p class="font-weight-bold">
+                Descripción del Ticket
+            </p>
+            <div class="form-group">
+                <hr>
+                @Html.Raw(ticket.descripcion)
+            </div>
             <div class="form-group">
                 <label for="estado" class="font-weight-bold">Estado:</label>
                 <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>

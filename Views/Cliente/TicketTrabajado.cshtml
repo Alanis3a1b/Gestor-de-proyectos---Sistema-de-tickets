@@ -16,7 +16,7 @@
                 <label for="fullName" class="font-weight-bold">Nombre completo:</label>
                 <input type="text" class="form-control" id="fullName" value="@ticket.nombre" readonly>
             </div>
-            
+
             <div class="form-group">
                 <label for="phone" class="font-weight-bold">Número de teléfono:</label>
                 <input type="text" class="form-control" id="phone" value="@ticket.telefono_usuario" readonly>
@@ -33,9 +33,20 @@
                 <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
                 <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
             </div>
+            <p class="font-weight-bold">
+                Descripción del Ticket
+            </p>
             <div class="form-group">
                 <hr>
                 @Html.Raw(ticket.descripcion)
+            </div>
+            <hr>
+            <p class="font-weight-bold">
+                Respuesta del Ticket
+            </p>
+            <div class="form-group">
+                <hr>
+                @Html.Raw(string.IsNullOrEmpty(ticket.respuesta) ? "Aun sin respuesta" : ticket.respuesta)
             </div>
         </div>
     </div>

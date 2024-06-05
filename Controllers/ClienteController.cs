@@ -38,47 +38,31 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-        public IActionResult HistorialDeTickets(string estado = "Todos")
+        public IActionResult HistorialDeTickets()
         {
-            if (HttpContext.Session.GetString("user") == null)
-            {
-                return RedirectToAction("Index", "Inicio");
-            }
-
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
-            var historialTickets = from t in _sistemadeticketsDBContext.tickets
-                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
-                                   join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario
-                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
-                                   where u.id_usuario == datosUsuario.id_usuario
-                                   select new
-                                   {
-                                       t.id_ticket,
-                                       t.fecha,
-                                       Usuario = u.usuario,
-                                       t.nombre_ticket,
-                                       Estado = e.nombre_estado,
-                                       AsignadoA = ua.nombre
-                                   };
 
-            if (estado != "Todos")
-            {
-                historialTickets = historialTickets.Where(t => t.Estado == estado);
-            }
+            var historialTickets = (from t in _sistemadeticketsDBContext.tickets
+                                    join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                                    join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario into uag
+                                    from ua in uag.DefaultIfEmpty()
+                                    join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                                    where u.usuario == datosUsuario.usuario
+                                    select new
+                                    {
+                                        t.id_ticket,
+                                        t.fecha,
+                                        Usuario = u.usuario,
+                                        t.nombre_ticket,
+                                        Estado = e.nombre_estado,
+                                        AsignadoA = ua != null ? ua.nombre : "Sin asignar"
+                                    }).ToList();
 
-            var estadosList = _sistemadeticketsDBContext.estados.ToList();
-            var selectOptions = estadosList
-                .Select(e => $"<option value=\"{e.nombre_estado}\" {(estado == e.nombre_estado ? "selected" : "")}>{e.nombre_estado}</option>")
-                .ToList();
-
-            selectOptions.Insert(0, $"<option value=\"Todos\" {(estado == "Todos" ? "selected" : "")}>Todos</option>");
-            ViewData["SelectOptions"] = string.Join("\n", selectOptions);
-
-            ViewData["HistorialTickets"] = historialTickets.ToList();
-            ViewData["SelectedEstado"] = estado;
+            ViewData["HistorialTickets"] = historialTickets;
 
             return View();
         }
+
 
 
 
@@ -128,7 +112,8 @@ namespace Sistema_de_tickets.Controllers
                               AsignadoA = u.nombre,
                               correo_usuario = u.correo,
                               nombre = u.nombre,
-                              telefono_usuario = t.telefono_usuario // Agrega el teléfono del usuario a la consulta
+                              telefono_usuario = t.telefono_usuario,
+                              respuesta = t.respuesta
                           }).FirstOrDefault();
 
             if (ticket == null)
@@ -140,6 +125,7 @@ namespace Sistema_de_tickets.Controllers
 
             return View();
         }
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -185,6 +171,7 @@ namespace Sistema_de_tickets.Controllers
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             nuevoTicket.nombre_usuario = datosUsuario.nombre;
             nuevoTicket.id_usuario = datosUsuario.id_usuario;
+            nuevoTicket.id_usuario_asignado = null;
 
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
