@@ -1,22 +1,49 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+.bg-purple {
+    background: url('/images/fondo2.svg') no-repeat center center;
+    background-size: cover;
+    background-color: #6a1b9a;
+    border-radius: 15px;
+}
+
+.btnEmpleado {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 650px;
+}
+
+.btnEmpleado {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 650px;
+    float: right;
+}
+
+hr {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
 }

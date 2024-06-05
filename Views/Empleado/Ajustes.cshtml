@@ -1,0 +1,92 @@
+﻿@{
+	ViewData["Title"] = "Ajustes";
+}
+
+<div class="container mt-5">
+	<div class="row">
+		<!-- Card Ajustes -->
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header text-white" style="background-color: #6f42c1;">
+					<b>AJUSTES</b>
+				</div>
+				<div class="card-body" style="background-color: #f8f9fa;">
+					<div class="mb-3">
+						<strong>Cambiar datos de perfil</strong>
+					</div>
+					<hr>
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<label for="profilePicture" class="form-label">Foto de perfil:</label>
+							<input type="file" class="form-control" id="profilePicture">
+						</div>
+						<div class="col-md-6">
+							<label for="name" class="form-label">Nombre:</label>
+							<input type="text" class="form-control" id="name">
+						</div>
+					</div>
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<label for="email" class="form-label">Correo:</label>
+							<input type="email" class="form-control" id="email">
+						</div>
+						<div class="col-md-6">
+							<label for="address" class="form-label">Dirección:</label>
+							<input type="text" class="form-control" id="address">
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<strong>Ajustes de software</strong>
+					</div>
+					<hr>
+					<div class="row mb-3">
+						<div class="col-md-6">
+							<label for="mode" class="form-label">Modo:</label>
+							<select class="form-select" id="mode">
+								<option>Claro</option>
+								<option>Oscuro</option>
+							</select>
+						</div>
+						<div class="col-md-6">
+							<label for="language" class="form-label">Idioma:</label>
+							<select class="form-select" id="language">
+								<option>Español</option>
+								<option>Inglés</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="text-right mt-3">
+				<button type="button" class="btn btn-primary btnAjuste" onclick="location.href='@Url.Action(" #", "#" )'"
+						style="background-color: #48b4fc; color: white;">
+					<b>GUARDAR CAMBIOS</b>
+				</button>
+			</div>
+		</div>
+
+		<!-- Card Perfil de Cliente -->
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header text-white" style="background-color: #6f42c1;">
+					<b>PERFIL DE CLIENTE</b>
+				</div>
+				<div class="card-body text-center" style="background-color: #f8f9fa;">
+					<div class="mb-3">
+						<img src="#" alt="Imagen de perfil" class="rounded-circle" style="width: 150px; height: 150px;">
+					</div>
+					<div class="mb-3">
+						<strong>Nombre:</strong>
+						<p id="clientName">Nombre del Cliente</p>
+					</div>
+					<div class="mb-3">
+						<strong>Correo:</strong>
+						<p id="clientEmail">correo@ejemplo.com</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
