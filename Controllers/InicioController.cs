@@ -65,7 +65,7 @@ namespace Sistema_de_tickets.Controllers
             {
                 //Para los empleados (cuando tengan su propia vista...)
                 HttpContext.Session.SetString("user", datoUsuario);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("HomeEmpleado", "Empleado");
             }
 
             //Me redirige al Index de la carpeta Home, asi se hace para redirigir a otras vistas de diferentes carpetas
