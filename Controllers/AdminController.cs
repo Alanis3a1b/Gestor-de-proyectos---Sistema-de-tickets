@@ -12,10 +12,7 @@ namespace Sistema_de_tickets.Controllers
 {
     public class AdminController : Controller
     {
-        //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
-
-        //Este método me permite enviar correos
         private IConfiguration _configuration;
 
         public AdminController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration)
@@ -23,31 +20,32 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
             _configuration = configuration;
         }
+
         public IActionResult HomeAdmin()
         {
             return View();
         }
-
+        //Ver todos los tickets existentes
         public IActionResult TodosLosTickets()
         {
             var todoslostickets = from t in _sistemadeticketsDBContext.tickets
-                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
-                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
-                                   select new
-                                   {
-                                       t.id_ticket,
-                                       t.fecha,
-                                       Usuario = u.usuario,
-                                       t.nombre_ticket,
-                                       Estado = e.nombre_estado,
-                                       AsignadoA = u.nombre
-                                   };
+                                  join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                                  join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                                  select new
+                                  {
+                                      t.id_ticket,
+                                      t.fecha,
+                                      Usuario = u.usuario,
+                                      t.nombre_ticket,
+                                      Estado = e.nombre_estado,
+                                      AsignadoA = u.nombre
+                                  };
 
             ViewData["TodosLosTickets"] = todoslostickets.ToList();
 
             return View();
         }
-
+        // 
         public IActionResult TrabajarTicketAdmin(int id)
         {
             var ticket = _sistemadeticketsDBContext.tickets.Find(id);
@@ -63,8 +61,7 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-
-        //Trabajar tickets (aun no funciona...)
+        // Funciona para extraer la info del ticket a trabajar
         public IActionResult TicketTrabajado(int id)
         {
             var ticket = (from t in _sistemadeticketsDBContext.tickets
@@ -86,7 +83,7 @@ namespace Sistema_de_tickets.Controllers
                               telefono_usuario = t.telefono_usuario,
                               id_estado = t.id_estado,
                               id_prioridad = t.id_prioridad,
-                              respuesta = t.respuesta // Agrega la propiedad respuesta a la consulta
+                              respuesta = t.respuesta
                           }).FirstOrDefault();
 
             if (ticket == null)
@@ -99,7 +96,7 @@ namespace Sistema_de_tickets.Controllers
             return View("TrabajarTicketAdmin");
         }
 
-
+        //Para guardar cambios en el ticket, aun no funciona
         public IActionResult GuardarCambios(int id, int id_estado, string respuesta)
         {
             var ticket = _sistemadeticketsDBContext.tickets.Find(id);
@@ -116,14 +113,10 @@ namespace Sistema_de_tickets.Controllers
             return RedirectToAction("TrabajarTicketAdmin", new { id = id });
         }
 
-
-
-
         private bool TicketExists(int id)
         {
             return _sistemadeticketsDBContext.tickets.Any(t => t.id_ticket == id);
         }
-
 
         public IActionResult CrearUsuariosAdmin(usuarios usuarioNuevo)
         {
