@@ -112,6 +112,7 @@ namespace Sistema_de_tickets.Controllers
                 return NotFound();
             }
 
+            //Guardar los datos del ticket
             ticketActual.respuesta = respuesta;
             ticketActual.id_estado = id_estado;
             ticketActual.id_prioridad = id_prioridad;
@@ -119,8 +120,27 @@ namespace Sistema_de_tickets.Controllers
 
             _sistemadeticketsDBContext.SaveChanges();
 
+            //Extraer los datos del usuario del ticket
+            var ticket = (from t in _sistemadeticketsDBContext.tickets
+                          join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          select new
+                          {
+                              correo = u.correo,
+                              estado = e.nombre_estado,
+
+                          }).FirstOrDefault();
+
+            //Enviar correo de actualización
+            correo enviarCorreo = new correo(_configuration);
+            enviarCorreo.enviar(ticket.correo,
+                                "Actualización de su ticket: " + ticketActual.id_ticket,
+                                "Su ticket de nombre: ''" + ticketActual.nombre_ticket + "'' ha sido actualizado" + "\n" + "\n"
+                                + " Respuesta de su ticket: " + respuesta);
+
             return RedirectToAction("TicketEditado");
         }
+
 
         private bool TicketExists(int id)
         {
@@ -236,6 +256,7 @@ namespace Sistema_de_tickets.Controllers
 
         }
 
+        //Aun sin crear vista
         public IActionResult UsuarioEditado()
         {
             return View();

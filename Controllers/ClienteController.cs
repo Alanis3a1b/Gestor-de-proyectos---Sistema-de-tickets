@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
+using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
@@ -13,10 +14,11 @@ namespace Sistema_de_tickets.Controllers
     {
         //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
-
-        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext)
+        private readonly IConfiguration _configuration;
+        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
+            _configuration = configuration;
         }
 
         public IActionResult CrearTicket()
@@ -30,6 +32,11 @@ namespace Sistema_de_tickets.Controllers
             var listaDeCategorias = (from e in _sistemadeticketsDBContext.categorias
                                      select e).ToList();
             ViewData["listadoDeCategorias"] = new SelectList(listaDeCategorias, "id_categoria", "nombre_categoria");
+
+            // Listado de categorías
+            var listaDePrioridad = (from e in _sistemadeticketsDBContext.prioridad
+                                     select e).ToList();
+            ViewData["listadoDePrioridad"] = new SelectList(listaDePrioridad, "id_prioridad", "nombre_prioridad");
 
             // Obtener los datos del usuario de la sesión
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
@@ -169,12 +176,35 @@ namespace Sistema_de_tickets.Controllers
         {
             // Obtener los datos del usuario de la sesión
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            
+            //Extraer los nombres de categoria, estado y prioridad
+            var ticket = (from t in _sistemadeticketsDBContext.tickets
+                          join c in _sistemadeticketsDBContext.categorias on t.id_categoria equals c.id_categoria
+                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          join p in _sistemadeticketsDBContext.prioridad on t.id_prioridad equals p.id_prioridad
+                          select new 
+                          {
+                              categoria = c.nombre_categoria,
+                              estado = e.nombre_estado,
+                              prioridad = p.nombre_prioridad
+                         }).FirstOrDefault();
+
+
             nuevoTicket.nombre_usuario = datosUsuario.nombre;
             nuevoTicket.id_usuario = datosUsuario.id_usuario;
             nuevoTicket.id_usuario_asignado = null;
-
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
+
+            //Enviar correo de confirmacion
+            correo enviarCorreo = new correo(_configuration);
+            enviarCorreo.enviar(datosUsuario.correo,
+                                "Su ticket ha sido creado correctamente!",
+                                "Se ha creado el ticket: " + nuevoTicket.id_ticket + "\n"
+                                + "Con el nombre de: " + nuevoTicket.nombre_ticket + "\n"
+                                + "La categoría de su ticket es de: " + ticket.categoria + "\n" 
+                                + "Estado del ticket: " + ticket.estado + "\n"
+                                + "Y la prioridad de su ticket es de: " + ticket.prioridad);
 
             return RedirectToAction("Success");
         }

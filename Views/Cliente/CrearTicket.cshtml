@@ -25,6 +25,11 @@
                     @Html.DropDownList("id_categoria", ViewData["listadoDeCategorias"] as SelectList, "--Sin categoría--", new { @class = "form-control" })
                 </div>
                 <hr>
+                <div class="form-group">
+                    <label for="prioridad" class="font-weight-bold">Cuanto es la prioridad de su problema?: <span style="color: red;">*</span></label>
+                    @Html.DropDownList("id_prioridad", ViewData["listadoDePrioridad"] as SelectList, "--Sin prioridad--", new { @class = "form-control" })
+                </div>
+                <hr>
                 <div>
                     <p class="font-weight-bold">
                         Detalles de Ticket
@@ -55,7 +60,6 @@
                     <!-- Elementos estáticos para la creación de tickets que luego se modificarán al trabajarlos -->
                     @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
                     @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
-                    @Html.TextBox("id_prioridad", "1", new { @class = "form-control", type = "hidden" })
                     @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
                     @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
                 </div>
