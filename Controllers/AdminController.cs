@@ -5,6 +5,7 @@ using Sistema_de_tickets.Models;
 using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 
 namespace Sistema_de_tickets.Controllers
 {
@@ -128,6 +129,69 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult CrearUsuariosAdmin()
         {
+            //Lista de los roles
+            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
+                                select m).ToList();
+            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+
+            //Lista de usuarios join con rol
+            var listaDeUsuarios = (from m in _sistemadeticketsDBContext.usuarios
+                                   join r in _sistemadeticketsDBContext.rol on m.id_rol equals r.id_rol
+                                   select new
+                                   {
+                                       m.id_usuario,
+                                       m.nombre,
+                                       m.correo,
+                                       rol = r.nombre_rol,
+                                       m.nombre_empresa,
+                                       m.usuario,
+                                       m.contrasenya
+                                   }).ToList();
+            ViewBag.usuarios = listaDeUsuarios;
+
+            return View();
+        }
+
+        //Crear usuarios
+        public IActionResult CrearUsuariossAdmin(usuarios usuarioNuevo)
+        {
+            correo enviarCorreo = new correo(_configuration);
+            _sistemadeticketsDBContext.Add(usuarioNuevo);
+            _sistemadeticketsDBContext.SaveChanges();
+            enviarCorreo.enviar(usuarioNuevo.correo,
+                                "Cuenta para acceder a HELPHUB",
+                                "Se le ha asignado una nueva cuenta cuyo nombre de cuenta es: " + usuarioNuevo.usuario + "\n"
+                                + " Y su contraseña es:  " + usuarioNuevo.contrasenya + "\n"
+                                + " La contraseña la puede cambiar ingresando a su cuenta e ingresando luego a su perfil.");
+
+            return RedirectToAction("CrearUsuariosAdmin");
+        }
+
+        //Editar usuario
+        public IActionResult EditarUsuarioAdmin(int id)
+        {
+            var usuario = (from m in _sistemadeticketsDBContext.usuarios
+                           join r in _sistemadeticketsDBContext.rol on m.id_rol equals r.id_rol
+                           where m.id_usuario == id
+                           select new
+                           {
+                               m.id_usuario,
+                               m.nombre,
+                               m.correo,
+                               rol = r.nombre_rol,
+                               m.nombre_empresa,
+                               m.usuario,
+                               m.contrasenya
+                           }).ToList();
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["usuario"] = usuario;
+
+            //Lista de los roles
             var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
                                 select m).ToList();
             ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
@@ -135,52 +199,28 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-        [HttpPost]
-        public IActionResult CrearUsuariosAdmin(usuarios usuarioNuevo)
+        public IActionResult GuardarCambiosUsuario(int id_usuario, string nombre, string correo, int id_rol, string nombre_empresa, string usuario, string contrasenya)
         {
-            correo enviarCorreo = new correo(_configuration);
-            _sistemadeticketsDBContext.Add(usuarioNuevo);
-            _sistemadeticketsDBContext.SaveChanges();
-            enviarCorreo.enviar(usuarioNuevo.correo,
-                                "Bienvenido al sistema de tickets",
-                                "Su usuario ha sido creado exitosamente.");
+            var usuarioActual = _sistemadeticketsDBContext.usuarios.FirstOrDefault(t => t.id_usuario == id_usuario);
 
-            return RedirectToAction("HomeAdmin");
-        }
-
-        public IActionResult EditarUsuarioAdmin(int id)
-        {
-            var usuario = _sistemadeticketsDBContext.usuarios.Find(id);
-            if (usuario == null)
+            if (usuarioActual == null)
             {
                 return NotFound();
             }
 
-            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
-                                select m).ToList();
-            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
+            usuarioActual.nombre = nombre;
+            usuarioActual.correo = correo;
+            usuarioActual.id_rol = id_rol;
+            usuarioActual.nombre_empresa = nombre_empresa;
+            usuarioActual.usuario = usuario;
+            usuarioActual.contrasenya = contrasenya;
 
-            return View(usuario);
-        }
-
-        [HttpPost]
-        public IActionResult EditarUsuarioAdmin(usuarios usuarioActualizado)
-        {
-            if (!ModelState.IsValid)
-            {
-                var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
-                                    select m).ToList();
-                ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
-
-                return View(usuarioActualizado);
-            }
-
-            _sistemadeticketsDBContext.Update(usuarioActualizado);
             _sistemadeticketsDBContext.SaveChanges();
 
-            return RedirectToAction("HomeAdmin");
+            return RedirectToAction("UsuarioEditado");
         }
 
+        //Eliminar usuario
         public IActionResult EliminarUsuarioAdmin(int id)
         {
             var usuario = _sistemadeticketsDBContext.usuarios.Find(id);
@@ -192,12 +232,20 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext.usuarios.Remove(usuario);
             _sistemadeticketsDBContext.SaveChanges();
 
-            return RedirectToAction("HomeAdmin");
+            return RedirectToAction("CrearUsuariosAdmin");
+
+        }
+
+        public IActionResult UsuarioEditado()
+        {
+            return View();
         }
 
         public IActionResult TicketEditado()
         {
             return View();
         }
+
+
     }
 }

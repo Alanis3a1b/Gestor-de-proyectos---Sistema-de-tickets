@@ -2,21 +2,21 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "Home Page";
-    var usuarios = ViewBag.usuarios;
+    ViewBag.Title = "Editar Usuario";
+    var usuario = ViewData["usuario"] as dynamic;
 }
 
 <div class="container mt-5">
     <div class="card mb-3">
         <div class="card-header" style="background-color: #800080; color: white;">
-            GESTIONAR USUARIO
+            EDITAR USUARIO ID: @usuario.id_usuario
         </div>
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
             <p class="font-weight-bold" style="text-align: left;">
-                CREAR NUEVO USUARIO
+                CREAR NUEVO USUARIO 
             </p>
             <hr>
-            <form asp-action="CrearUsuariossAdmin">
+           @*  <form asp-action="GuardarCambiosUsuario">
                 <div class="form-group">
                     <label for="nombre_ticket" class="font-weight-bold">Ingrese el nombre del usuario: <span style="color: red;">*</span></label>
                     @Html.TextBox("nombre", "", new { @class = "form-control" })
@@ -63,51 +63,7 @@
 
                 <div class="d-flex justify-content-end">
                     <!-- Utiliza un botón de tipo "button" para evitar envíos de formulario -->
-                    <input type="submit" class="btn btn-primary btn-lg small" value="CREAR USUARIOS" />
+                    <input type="submit" class="btn btn-primary btn-lg small" value="GUARDAR CAMBIOS" />
                 </div>
 
-            </form>
-            <!--Tabla con todos los usuarios-->
-            <hr>
-            <table class="table table-bordered">
-                <thead>
-                    <tr style="background-color: #800080; color: white;">
-                        <th colspan="10" class="text-center">USUARIOS</th>
-                    </tr>
-                </thead>
-                <thead>
-                    <tr style="color: black;">
-                        <th style="background-color: #c080c0;"></th>
-                        <th style="background-color: #c080c0;">ID</th>
-                        <th style="background-color: #c080c0;">NOMBRE</th>
-                        <th style="background-color: #c080c0;">CORREO</th>
-                        <th style="background-color: #c080c0;">ROL</th>
-                        <th style="background-color: #c080c0;">EMPRESA</th>
-                        <th style="background-color: #c080c0;">USUARIO</th>
-                        <th style="background-color: #c080c0;">CONTRASEÑA</th>
-                        <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
-                        <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var usuario in usuarios)
-                    {
-                        <tr>
-                            <td style="background-color: #c080c0;"></td>
-                            <td>@usuario.id_usuario</td>
-                            <td>@usuario.nombre</td>
-                            <td>@usuario.correo</td>
-                            <td>@usuario.rol</td>
-                            <td>@usuario.nombre_empresa</td>
-                            <td>@usuario.usuario</td>
-                            <td class="password">@usuario.contrasenya</td>
-                            <td><a href="@Url.Action("EditarUsuarioAdmin", "Admin", new { id = usuario.id_usuario })">Editar</a></td>
-                            <td><a href="@Url.Action("EliminarUsuarioAdmin", "Admin", new { id = usuario.id_usuario })">Eliminar</a></td> <!--FUNCIONA-->
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-</div>
+            </form> *@
