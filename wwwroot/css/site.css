@@ -47,3 +47,31 @@ hr {
     border-top: 1px solid #ccc;
     margin-top: 20px;
 }
+
+
+/*login*/
+.Fondo {
+    background-image: url('/images/LoginBG.png');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    /*display: flex;*/
+    justify-content: center;
+    align-items: center;
+    margin-bottom: auto;
+}
+
+.login-container {
+    background-color: rgba(59, 2, 66, 0.8);
+    border-radius: 10px;
+    box-shadow: rgba(44, 44, 44, 0.1));
+    text-align: center;
+    padding: 20px 30px 40px;
+    margin-bottom;
+}
+
+form {
+    /*display: flex;*/
+    flex-direction: column;
+}
