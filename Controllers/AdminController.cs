@@ -22,6 +22,18 @@ namespace Sistema_de_tickets.Controllers
 
         public IActionResult HomeAdmin()
         {
+            var tickets = (from t in _sistemadeticketsDBContext.tickets
+                           join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                           join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado           
+                           select new
+                           {
+                               t.id_ticket,
+                               t.fecha,
+                               t.nombre_usuario,
+                               t.nombre_ticket,
+                               e.nombre_estado
+                           }).ToList();
+            ViewBag.Tickets = tickets;
             return View();
         }
 

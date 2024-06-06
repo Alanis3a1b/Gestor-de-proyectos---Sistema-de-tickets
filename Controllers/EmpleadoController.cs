@@ -51,8 +51,9 @@ namespace Sistema_de_tickets.Controllers
             var usuarioSesion = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             var ticketsEmpleado = from t in _sistemadeticketsDBContext.tickets
                                   join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                                  join ua in _sistemadeticketsDBContext.usuarios on t.id_usuario_asignado equals ua.id_usuario
                                   join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
-                                  where t.id_usuario_asignado == usuarioSesion.id_usuario // Filtrar por tickets asignados al empleado
+                                  where t.id_usuario_asignado == usuarioSesion.id_usuario // Filtrar por tickets asignados al empleado que inicio sesión
                                   select new
                                   {
                                       t.id_ticket,
@@ -60,7 +61,7 @@ namespace Sistema_de_tickets.Controllers
                                       Usuario = u.usuario,
                                       t.nombre_ticket,
                                       Estado = e.nombre_estado,
-                                      AsignadoA = u.nombre
+                                      AsignadoA = ua.nombre
                                   };
 
             if (estado != "Todos")
