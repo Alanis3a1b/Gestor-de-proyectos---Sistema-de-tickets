@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Sistema_de_tickets.Models;
 using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 
 
@@ -15,10 +14,12 @@ namespace Sistema_de_tickets.Controllers
         //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
         private readonly IConfiguration _configuration;
-        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
             _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IActionResult CrearTicket()
@@ -35,7 +36,7 @@ namespace Sistema_de_tickets.Controllers
 
             // Listado de categorías
             var listaDePrioridad = (from e in _sistemadeticketsDBContext.prioridad
-                                     select e).ToList();
+                                    select e).ToList();
             ViewData["listadoDePrioridad"] = new SelectList(listaDePrioridad, "id_prioridad", "nombre_prioridad");
 
             // Obtener los datos del usuario de la sesión
@@ -70,10 +71,6 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-
-
-
-
         public IActionResult HomeCliente()
         {
             var usuarioSesion = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
@@ -93,8 +90,6 @@ namespace Sistema_de_tickets.Controllers
             ViewBag.Tickets = tickets;
             return View();
         }
-
-
 
         public IActionResult Settings()
         {
@@ -172,23 +167,39 @@ namespace Sistema_de_tickets.Controllers
 
         //Función para guardar crear los tickets
         //(usuarios nuevoUsuario) ---> ("nombre tabla a meter datos" "variable")
-        public IActionResult CrearTickets(tickets nuevoTicket)
+        public IActionResult CrearTickets(tickets nuevoTicket, IFormFile archivoAdjunto)
         {
-            // Obtener los datos del usuario de la sesión
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
-            
-            //Extraer los nombres de categoria, estado y prioridad
-            var ticket = (from t in _sistemadeticketsDBContext.tickets
-                          join c in _sistemadeticketsDBContext.categorias on t.id_categoria equals c.id_categoria
-                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
-                          join p in _sistemadeticketsDBContext.prioridad on t.id_prioridad equals p.id_prioridad
-                          select new 
-                          {
-                              categoria = c.nombre_categoria,
-                              estado = e.nombre_estado,
-                              prioridad = p.nombre_prioridad
-                         }).FirstOrDefault();
 
+            var ticketInfo = (from c in _sistemadeticketsDBContext.categorias
+                              join e in _sistemadeticketsDBContext.estados on nuevoTicket.id_estado equals e.id_estado
+                              join p in _sistemadeticketsDBContext.prioridad on nuevoTicket.id_prioridad equals p.id_prioridad
+                              where nuevoTicket.id_categoria == c.id_categoria
+                              select new
+                              {
+                                  categoria = c.nombre_categoria,
+                                  estado = e.nombre_estado,
+                                  prioridad = p.nombre_prioridad
+                              }).FirstOrDefault();
+
+            if (archivoAdjunto != null && archivoAdjunto.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(archivoAdjunto.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    archivoAdjunto.CopyTo(fileStream);
+                }
+
+                nuevoTicket.url_archivo = "/uploads/" + fileName;
+            }
 
             nuevoTicket.nombre_usuario = datosUsuario.nombre;
             nuevoTicket.id_usuario = datosUsuario.id_usuario;
@@ -196,15 +207,14 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
 
-            //Enviar correo de confirmacion
             correo enviarCorreo = new correo(_configuration);
             enviarCorreo.enviar(datosUsuario.correo,
                                 "Su ticket ha sido creado correctamente!",
                                 "Se ha creado el ticket: " + nuevoTicket.id_ticket + "\n"
                                 + "Con el nombre de: " + nuevoTicket.nombre_ticket + "\n"
-                                + "La categoría de su ticket es de: " + ticket.categoria + "\n" 
-                                + "Estado del ticket: " + ticket.estado + "\n"
-                                + "Y la prioridad de su ticket es de: " + ticket.prioridad);
+                                + "La categoría de su ticket es de: " + ticketInfo.categoria + "\n"
+                                + "Estado del ticket: " + ticketInfo.estado + "\n"
+                                + "Y la prioridad de su ticket es de: " + ticketInfo.prioridad);
 
             return RedirectToAction("Success");
         }
@@ -214,6 +224,7 @@ namespace Sistema_de_tickets.Controllers
         {
             return View();
         }
+
 
 
     }

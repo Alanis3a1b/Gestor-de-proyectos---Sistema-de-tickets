@@ -15,7 +15,7 @@
             <p class="font-weight-bold">
                 Información de contacto
             </p>
-            <form asp-action="CrearTickets">
+            <form asp-action="CrearTickets" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="telefono_usuario" class="font-weight-bold">Número de teléfono: <span style="color: red;">*</span></label>
                     @Html.TextBox("telefono_usuario", "", new { @class = "form-control", placeholder = "Ingrese su numero de contacto" })
@@ -26,9 +26,16 @@
                 </div>
                 <hr>
                 <div class="form-group">
-                    <label for="prioridad" class="font-weight-bold">Cuanto es la prioridad de su problema?: <span style="color: red;">*</span></label>
+                    <label for="prioridad" class="font-weight-bold">¿Cuánto es la prioridad de su problema?: <span style="color: red;">*</span></label>
                     @Html.DropDownList("id_prioridad", ViewData["listadoDePrioridad"] as SelectList, "--Sin prioridad--", new { @class = "form-control" })
                 </div>
+                <hr>
+                @* Seccion para subir archivos *@
+                <div class="form-group">
+                    <label for="archivoAdjunto" class="font-weight-bold">Archivo:</label>
+                    <input type="file" id="archivoAdjunto" name="archivoAdjunto" class="form-control-file">
+                </div>
+                @* Fin de la seccion para subir archivos *@
                 <hr>
                 <div>
                     <p class="font-weight-bold">
