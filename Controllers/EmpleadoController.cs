@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace Sistema_de_tickets.Controllers
     {
         //Necesario hacer estos contextos antes de empezar a programar 
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
-
-        public EmpleadoController(sistemadeticketsDBContext sistemadeticketsDbContext)
+        //Descargar archivo
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public EmpleadoController(sistemadeticketsDBContext sistemadeticketsDbContext, IWebHostEnvironment webHostEnvironment)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult HomeEmpleado()
@@ -128,6 +131,33 @@ namespace Sistema_de_tickets.Controllers
         {
             return View();
         }
-       
+
+
+        //Descargar el archivo subido por el cliente
+        public IActionResult DescargarArchivo(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return NotFound();
+            }
+
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, filePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(path))
+            {
+                return NotFound();
+            }
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "application/octet-stream", Path.GetFileName(path));
+        }
+
+
     }
 }

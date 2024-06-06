@@ -36,6 +36,17 @@
             <p class="font-weight-bold">
                 Descripción del Ticket
             </p>
+            @* Mostrar y descargar archivo adjunto *@
+            <div class="form-group">
+                @if (!string.IsNullOrEmpty(ticket.url_archivo))
+                {
+                    <a href="@Url.Action("DescargarArchivo", "Cliente", new { filePath = ticket.url_archivo })" class="btn btn-info" download>Descargar archivo</a>
+                }
+                else
+                {
+                    <p>No hay archivo adjunto.</p>
+                }
+            </div>
             <div class="form-group">
                 <hr>
                 @Html.Raw(ticket.descripcion)

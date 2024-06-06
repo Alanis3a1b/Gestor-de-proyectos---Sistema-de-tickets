@@ -15,11 +15,14 @@ namespace Sistema_de_tickets.Controllers
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        //Descargar archivo
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ClienteController(sistemadeticketsDBContext sistemadeticketsDbContext, IConfiguration configuration, IWebHostEnvironment hostingEnvironment, IWebHostEnvironment webHostEnvironment)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
             _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult CrearTicket()
@@ -115,7 +118,8 @@ namespace Sistema_de_tickets.Controllers
                               correo_usuario = u.correo,
                               nombre = u.nombre,
                               telefono_usuario = t.telefono_usuario,
-                              respuesta = t.respuesta
+                              respuesta = t.respuesta,
+                              url_archivo = t.url_archivo
                           }).FirstOrDefault();
 
             if (ticket == null)
@@ -225,7 +229,30 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
+        //Descargar el archivo subido por el cliente
+        public IActionResult DescargarArchivo(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return NotFound();
+            }
 
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, filePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(path))
+            {
+                return NotFound();
+            }
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "application/octet-stream", Path.GetFileName(path));
+        }
 
     }
 }

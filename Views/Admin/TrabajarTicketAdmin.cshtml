@@ -63,6 +63,19 @@
                 <label for="estado" class="font-weight-bold">Estado:</label>
                 <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>
             </div>
+
+            @* Mostrar y descargar archivo adjunto *@
+            <div class ="form-group">
+                @if (!string.IsNullOrEmpty(ticket.url_archivo))
+                {
+                    <a href="@Url.Action("DescargarArchivo", "Admin", new { filePath = ticket.url_archivo })" class="btn btn-info" download>Descargar archivo</a>
+                }
+                else
+                {
+                    <p>No hay archivo adjunto.</p>
+                }
+            </div>
+
             @*Prioridad*@
             <div class="form-group">
                 <label for="prioridad" class="font-weight-bold">Prioridad:</label><br />
@@ -85,13 +98,12 @@
                 <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label><br />
                 <input type="radio" id="abierto" name="estado" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="abierto">Abierto</label><br />
-                <input type="radio" id="En espera de información del cliente" name="estado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
-                <label for="cerrado">En espera de información del cliente</label><br />
+                <input type="radio" id="espera" name="estado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
+                <label for="espera">En espera de información del cliente</label><br />
                 <input type="radio" id="cerrado" name="estado" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="cerrado">Cerrado</label><br />
                 <input type="radio" id="resuelto" name="estado" value="4" @(ticket.id_estado == 4 ? "checked" : "") onclick="uncheckOthers(this)">
                 <label for="resuelto">Resuelto</label>
-
             </div>
             @*Asignar Usuario*@
             <div class="form-group">
@@ -111,19 +123,28 @@
     </div>
 </div>
 
-    @section Scripts {
+@section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
-        <script>
-            tinymce.init({
-                selector: '#respuesta',
-                plugins: 'image imagetools media link codesample table',
-                toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect',
-            });
+    <script src="https://cdn.tiny.cloud/1/rx66b37yvvqyq620z86ljevusuqr1tmvt0aa5gt9oaeyqi1f/tinymce/5/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#respuesta',
+            plugins: 'image imagetools media link codesample table',
+            toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect',
+        });
 
-            function uncheckOthers(checkbox) {
-                var checkboxes = document.querySelectorAll('input[name="estado"]');
+        function uncheckOthers(checkbox) {
+            var checkboxes = document.querySelectorAll('input[name="estado"]');
+            checkboxes.forEach(function (cb) {
+                if (cb !== checkbox) {
+                    cb.checked = false;
+                }
+            });
+        }
+
+        function uncheckOthersPrioridad(checkbox) {
+                var checkboxes = document.querySelectorAll('input[name="prioridad"]');
                 checkboxes.forEach(function (cb) {
                     if (cb !== checkbox) {
                         cb.checked = false;
@@ -131,56 +152,48 @@
                 });
             }
 
-            function uncheckOthersPrioridad(checkbox) {
-                    var checkboxes = document.querySelectorAll('input[name="prioridad"]');
-                    checkboxes.forEach(function (cb) {
-                        if (cb !== checkbox) {
-                            cb.checked = false;
-                        }
-                    });
-                }
+    function guardarCambios() {
+        // Obtener el valor de respuesta del editor TinyMCE
+        var respuesta = tinymce.get('respuesta').getContent();
 
-        function guardarCambios() {
-            // Obtener el valor de respuesta del editor TinyMCE
-            var respuesta = tinymce.get('respuesta').getContent();
+        var estado = 0;
+        var id_ticket = @ticket.id_ticket;
+        var prioridad = 0;
+        var id_usuario_asignado = document.getElementById('usuarioAsignado').value;
 
-            var estado = 0;
-            var id_ticket = @ticket.id_ticket;
-            var prioridad = 0;
-            var id_usuario_asignado = document.getElementById('usuarioAsignado').value;
+        var estadoRadios = document.querySelectorAll('input[name="estado"]');
+        estadoRadios.forEach(function (radio) {
+            if (radio.checked) {
+                estado = parseInt(radio.value);
+            }
+        });
 
-            var estadoRadios = document.querySelectorAll('input[name="estado"]');
-            estadoRadios.forEach(function (radio) {
-                if (radio.checked) {
-                    estado = parseInt(radio.value);
-                }
-            });
+        var prioridadRadios = document.querySelectorAll('input[name="prioridad"]');
+        prioridadRadios.forEach(function (radio) {
+            if (radio.checked) {
+                prioridad = parseInt(radio.value);
+            }
+        });
 
-            var prioridadRadios = document.querySelectorAll('input[name="prioridad"]');
-            prioridadRadios.forEach(function (radio) {
-                if (radio.checked) {
-                    prioridad = parseInt(radio.value);
-                }
-            });
-
-            // Aquí puedes hacer la llamada AJAX para actualizar el ticket en la base de datos
-            // Por ejemplo, usando jQuery
-            $.ajax({
-                url: '/Admin/GuardarCambios',
-                method: 'POST',
-                data: { id_ticket: id_ticket, respuesta: respuesta, id_estado: estado, id_prioridad: prioridad, id_usuario_asignado: id_usuario_asignado },
-                success: function (response) {
-                    // Aquí puedes manejar la respuesta del servidor
-                    console.log(response);
-                    window.location.href = '/Admin/TicketEditado'; // Redirigir a la vista TicketEditado
-                },
-                error: function (error) {
-                    // Aquí puedes manejar los errores de la llamada AJAX
-                    console.log(error);
+        // Aquí puedes hacer la llamada AJAX para actualizar el ticket en la base de datos
+        // Por ejemplo, usando jQuery
+        $.ajax({
+            url: '/Admin/GuardarCambios',
+            method: 'POST',
+            data: { id_ticket: id_ticket, respuesta: respuesta, id_estado: estado, id_prioridad: prioridad, id_usuario_asignado: id_usuario_asignado },
+            success: function (response) {
+                // Aquí puedes manejar la respuesta del servidor
+                console.log(response);
+                window.location.href = '/Admin/TicketEditado'; // Redirigir a la vista TicketEditado
+            },
+            error: function (error) {
+                // Aquí puedes manejar
+  
+                    console.error(error);
+                    alert('Hubo un error al guardar los cambios. Por favor, inténtelo de nuevo.');
                 }
             });
         }
+    </script>
+}
 
-
-        </script>
-    }

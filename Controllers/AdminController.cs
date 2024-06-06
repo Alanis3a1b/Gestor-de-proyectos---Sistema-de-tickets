@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_de_tickets.Models;
@@ -6,6 +7,7 @@ using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Sistema_de_tickets.Controllers
 {
@@ -13,12 +15,16 @@ namespace Sistema_de_tickets.Controllers
     {
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
         private readonly IConfiguration _configuration;
+        //Descargar archivo
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AdminController(sistemadeticketsDBContext sistemadeticketsDBContext, IConfiguration configuration)
+        public AdminController(sistemadeticketsDBContext context, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
-            _sistemadeticketsDBContext = sistemadeticketsDBContext;
+            _sistemadeticketsDBContext = context;
             _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
+
 
         public IActionResult HomeAdmin()
         {
@@ -95,8 +101,10 @@ namespace Sistema_de_tickets.Controllers
                               telefono_usuario = t.telefono_usuario,
                               id_estado = t.id_estado,
                               id_prioridad = t.id_prioridad,
-                              respuesta = t.respuesta
+                              respuesta = t.respuesta,
+                              url_archivo = t.url_archivo  
                           }).FirstOrDefault();
+
 
             if (ticket == null)
             {
@@ -221,6 +229,30 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
+        //Descargar el archivo subido por el cliente
+        public IActionResult DescargarArchivo(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return NotFound();
+            }
+
+            var path = Path.Combine(_webHostEnvironment.WebRootPath, filePath.TrimStart('/'));
+
+            if (!System.IO.File.Exists(path))
+            {
+                return NotFound();
+            }
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                stream.CopyTo(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, "application/octet-stream", Path.GetFileName(path));
+        }
 
     }
 }

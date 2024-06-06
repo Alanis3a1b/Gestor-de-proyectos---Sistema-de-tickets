@@ -41,6 +41,18 @@
                 <input type="text" class="form-control" id="estado" value="@ViewData["Estado"]" readonly>
             </div>
 
+            @* Mostrar y descargar archivo adjunto *@
+            <div class="form-group">
+                @if (!string.IsNullOrEmpty(ticket.url_archivo))
+                {
+                    <a href="@Url.Action("DescargarArchivo", "Empleado", new { filePath = ticket.url_archivo })" class="btn btn-info" download>Descargar archivo</a>
+                }
+                else
+                {
+                    <p>No hay archivo adjunto.</p>
+                }
+            </div>
+
             @*Prioridad*@
             <div class="form-group">
                 <label for="prioridad" class="font-weight-bold">Prioridad:</label>
