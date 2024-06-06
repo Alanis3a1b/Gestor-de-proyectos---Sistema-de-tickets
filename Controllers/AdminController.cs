@@ -187,58 +187,6 @@ namespace Sistema_de_tickets.Controllers
             return RedirectToAction("CrearUsuariosAdmin");
         }
 
-        //Editar usuario
-        public IActionResult EditarUsuarioAdmin(int id)
-        {
-            var usuario = (from m in _sistemadeticketsDBContext.usuarios
-                           join r in _sistemadeticketsDBContext.rol on m.id_rol equals r.id_rol
-                           where m.id_usuario == id
-                           select new
-                           {
-                               m.id_usuario,
-                               m.nombre,
-                               m.correo,
-                               rol = r.nombre_rol,
-                               m.nombre_empresa,
-                               m.usuario,
-                               m.contrasenya
-                           }).ToList();
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            ViewData["usuario"] = usuario;
-
-            //Lista de los roles
-            var listaDeRoles = (from m in _sistemadeticketsDBContext.rol
-                                select m).ToList();
-            ViewData["listadoDeRoles"] = new SelectList(listaDeRoles, "id_rol", "nombre_rol");
-
-            return View();
-        }
-
-        public IActionResult GuardarCambiosUsuario(int id_usuario, string nombre, string correo, int id_rol, string nombre_empresa, string usuario, string contrasenya)
-        {
-            var usuarioActual = _sistemadeticketsDBContext.usuarios.FirstOrDefault(t => t.id_usuario == id_usuario);
-
-            if (usuarioActual == null)
-            {
-                return NotFound();
-            }
-
-            usuarioActual.nombre = nombre;
-            usuarioActual.correo = correo;
-            usuarioActual.id_rol = id_rol;
-            usuarioActual.nombre_empresa = nombre_empresa;
-            usuarioActual.usuario = usuario;
-            usuarioActual.contrasenya = contrasenya;
-
-            _sistemadeticketsDBContext.SaveChanges();
-
-            return RedirectToAction("UsuarioEditado");
-        }
 
         //Eliminar usuario
         public IActionResult EliminarUsuarioAdmin(int id)
@@ -254,12 +202,6 @@ namespace Sistema_de_tickets.Controllers
 
             return RedirectToAction("CrearUsuariosAdmin");
 
-        }
-
-        //Aun sin crear vista
-        public IActionResult UsuarioEditado()
-        {
-            return View();
         }
 
         public IActionResult TicketEditado()
