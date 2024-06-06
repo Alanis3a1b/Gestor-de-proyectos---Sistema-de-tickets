@@ -95,9 +95,8 @@
             </div>
             @*Asignar Usuario*@
             <div class="form-group">
-                <label for="usuarioAsignado" class="font-weight-bold">Asignar a usuario:</label>
+                <label for="usuarioAsignado" class="font-weight-bold">Asignar Ticket:</label>
                 <select id="usuarioAsignado" name="usuarioAsignado" class="form-control">
-                    <option value="">Seleccionar usuario</option>
                     @foreach (var usuario in ViewBag.Usuarios)
                     {
                         <option value="@usuario.id_usuario">@usuario.nombre</option>
