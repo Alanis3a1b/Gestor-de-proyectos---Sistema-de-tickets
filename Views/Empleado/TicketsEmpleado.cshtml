@@ -1,0 +1,62 @@
+﻿@{
+    var ticketsEmpleado = ViewData["TicketsEmpleado"] as IEnumerable<dynamic>;
+}
+
+<!-- Estructura de la tabla -->
+<div class="container mt-5">
+    <table class="table table-bordered">
+        <!-- Primera fila -->
+        <thead>
+            <tr style="background-color: #800080; color: white;">
+                <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
+                <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
+                    <span>BUSCAR POR ESTADO</span>
+                    <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;">
+                        @Html.Raw(ViewData["SelectOptions"])
+                    </select>
+                </th>
+            </tr>
+        </thead>
+        <!-- Segunda fila -->
+        <thead>
+            <tr style="color: black;">
+                <th style="background-color: #c080c0;"></th>
+                <th style="background-color: #c080c0;">ID</th>
+                <th style="background-color: #c080c0;">ÚLTIMA ACTUALIZACIÓN</th>
+                <th style="background-color: #c080c0;">USUARIO</th>
+                <th style="background-color: #c080c0;">ASUNTO</th>
+                <th style="background-color: #c080c0;">ESTADO</th>
+                <th style="background-color: #c080c0;">ASIGNADO A</th>
+                <th style="background-color: #c080c0;"></th>
+            </tr>
+        </thead>
+        <!-- Filas siguientes generadas con datos de la base de datos de los tickets del empleado -->
+        <tbody>
+            @foreach (var ticket in ticketsEmpleado)
+            {
+                <tr>
+                    <td style="background-color: #c080c0;"></td>
+                    <td>@ticket.id_ticket</td>
+                    <td>@ticket.fecha</td>
+                    <td>@ticket.Usuario</td>
+                    <td>@ticket.nombre_ticket</td>
+                    <td>@ticket.Estado</td>
+                    <td>@ticket.AsignadoA</td>
+                    <td>
+                        <a href="@Url.Action("TicketTrabajado", "Empleado", new { id = ticket.id_ticket })">Trabajar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('estadoFilter').addEventListener('change', function () {
+            var selectedEstado = this.value;
+            var url = '@Url.Action("TicketsEmpleado", "Empleado")?estado=' + selectedEstado;
+            window.location.href = url;
+        });
+    </script>
+}
