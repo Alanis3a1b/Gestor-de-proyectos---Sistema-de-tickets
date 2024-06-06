@@ -86,7 +86,6 @@
                         <th style="background-color: #c080c0;">USUARIO</th>
                         <th style="background-color: #c080c0;">CONTRASEÑA</th>
                         <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
-                        <th style="background-color: #c080c0;"></th> <!-- Nueva columna sin título -->
                     </tr>
                 </thead>
                 <tbody>
@@ -101,7 +100,6 @@
                             <td>@usuario.nombre_empresa</td>
                             <td>@usuario.usuario</td>
                             <td class="password">@usuario.contrasenya</td>
-                            <td><a href="@Url.Action("EditarUsuarioAdmin", "Admin", new { id = usuario.id_usuario })">Editar</a></td>
                             <td><a href="@Url.Action("EliminarUsuarioAdmin", "Admin", new { id = usuario.id_usuario })">Eliminar</a></td> <!--FUNCIONA-->
                         </tr>
                     }
