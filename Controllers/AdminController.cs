@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Hosting;
 using System.Text.Json;
+using Sistema_de_tickets.Serv;
 
 namespace Sistema_de_tickets.Controllers
 {
@@ -19,11 +20,15 @@ namespace Sistema_de_tickets.Controllers
         //Descargar archivo
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AdminController(sistemadeticketsDBContext context, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        //Subir fotos:
+        private readonly IUserService _userService;
+
+        public AdminController(sistemadeticketsDBContext context, IConfiguration configuration, IWebHostEnvironment webHostEnvironment, IUserService userService)
         {
             _sistemadeticketsDBContext = context;
             _configuration = configuration;
             _webHostEnvironment = webHostEnvironment;
+            _userService = userService;
         }
 
 
@@ -31,7 +36,7 @@ namespace Sistema_de_tickets.Controllers
         {
             var tickets = (from t in _sistemadeticketsDBContext.tickets
                            join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
-                           join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado           
+                           join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
                            select new
                            {
                                t.id_ticket,
@@ -103,7 +108,7 @@ namespace Sistema_de_tickets.Controllers
                               id_estado = t.id_estado,
                               id_prioridad = t.id_prioridad,
                               respuesta = t.respuesta,
-                              url_archivo = t.url_archivo  
+                              url_archivo = t.url_archivo
                           }).FirstOrDefault();
 
 
@@ -148,7 +153,7 @@ namespace Sistema_de_tickets.Controllers
                           where t.id_ticket == id_ticket && t.id_usuario == u.id_usuario
                           select new
                           {
-                              correo = u.correo,                            
+                              correo = u.correo,
 
                           }).FirstOrDefault();
             //Extraer el nombre del nuevo estado
@@ -169,7 +174,7 @@ namespace Sistema_de_tickets.Controllers
                                 + " Respuesta de su ticket: " + respuesta);
 
             //Enviar correo al usuario al quien se le asigno el ticket
-            var dameelcorreo = (from u in _sistemadeticketsDBContext.usuarios 
+            var dameelcorreo = (from u in _sistemadeticketsDBContext.usuarios
                                 where id_usuario_asignado == u.id_usuario
                                 select new
                                 {
@@ -258,19 +263,22 @@ namespace Sistema_de_tickets.Controllers
             }
             memory.Position = 0;
 
+            // Establecer encabezados de control de caché para evitar el almacenamiento en caché
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "-1";
+
             return File(memory, "application/octet-stream", Path.GetFileName(path));
         }
 
         //Restaura contraseña
         [HttpPost]
-        public IActionResult CambiarContrasena(string currentPassword, string newPassword, string confirmNewPassword)
+        public async Task<IActionResult> CambiarContrasena(string currentPassword, string newPassword, string confirmNewPassword, IFormFile photoUpload)
         {
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
 
-            // Buscar el usuario por su contraseña actual
             var usuario = _sistemadeticketsDBContext.usuarios.FirstOrDefault(u => u.contrasenya == currentPassword);
 
-            // Validar que el usuario existe y que la nueva contraseña y confirmación coincidan
             if (usuario == null)
             {
                 ModelState.AddModelError("currentPassword", "La contraseña actual es incorrecta.");
@@ -283,16 +291,77 @@ namespace Sistema_de_tickets.Controllers
                 return View("Settings");
             }
 
-            // Actualizar la contraseña en la base de datos
             usuario.contrasenya = newPassword;
             _sistemadeticketsDBContext.Update(usuario);
-            _sistemadeticketsDBContext.SaveChanges();
+            await _sistemadeticketsDBContext.SaveChangesAsync();
 
-            // Establecer un mensaje de éxito
-            TempData["Message"] = "Contraseña reestablecida correctamente.";
+            var usuarioF = await _userService.GetCurrentUserAsync();
+            string newFilePath = null;
 
-            // Redirigir a la página de Settings
-            return RedirectToAction("Settings");
+            if (photoUpload != null && photoUpload.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(usuarioF.direccion))
+                {
+                    string existingFilePath = Path.Combine(_webHostEnvironment.WebRootPath, usuarioF.direccion);
+                    if (System.IO.File.Exists(existingFilePath))
+                    {
+                        System.IO.File.Delete(existingFilePath);
+                    }
+                }
+
+                newFilePath = await UploadPhoto(photoUpload);
+                if (!string.IsNullOrEmpty(newFilePath))
+                {
+                    usuarioF.Foto = System.IO.File.ReadAllBytes(Path.Combine(_webHostEnvironment.WebRootPath, newFilePath));
+                    usuarioF.direccion = newFilePath;
+                }
+            }
+
+            _sistemadeticketsDBContext.Update(usuarioF);
+            await _sistemadeticketsDBContext.SaveChangesAsync();
+
+
+            // Actualizar el objeto de usuario en la sesión
+            var usuarioSesion = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            if (newFilePath != null)
+            {
+                usuarioSesion.direccion = newFilePath; // Actualizar la ruta en el objeto de sesión
+            }
+            HttpContext.Session.SetString("user", JsonSerializer.Serialize(usuarioSesion));
+
+            return Json(new { success = true, newImageUrl = "/" + newFilePath.Replace("\\", "/") });
+        }
+
+        private async Task<string> UploadPhoto(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return null;
+            }
+
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "ProfileImg");
+
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            string filePath = Path.Combine(uploadPath, fileName);
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return Path.Combine("ProfileImg", fileName);
         }
 
         public IActionResult Settings()
@@ -300,6 +369,20 @@ namespace Sistema_de_tickets.Controllers
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             ViewBag.NombreUsuario = datosUsuario.nombre;
             ViewBag.CorreoUsuario = datosUsuario.correo;
+
+            if (datosUsuario.Foto != null)
+            {
+                string base64Image = Convert.ToBase64String(datosUsuario.Foto);
+                ViewBag.FotoUsuario = $"data:image/png;base64,{base64Image}";
+            }
+            else if (!string.IsNullOrEmpty(datosUsuario.direccion))
+            {
+                ViewBag.FotoUsuario = "/" + datosUsuario.direccion.Replace("\\", "/");
+            }
+            else
+            {
+                ViewBag.FotoUsuario = null;
+            }
 
             return View();
         }

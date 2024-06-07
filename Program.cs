@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sistema_de_tickets.Models;
+using Sistema_de_tickets.Serv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,12 @@ builder.Services.AddSession(options =>
 
 // Añade IWebHostEnvironment a los servicios
 builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
+
+// Registrar IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
+// Registrar IUserService y su implementación
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

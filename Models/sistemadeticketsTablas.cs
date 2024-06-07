@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization; 
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Sistema_de_tickets.Models
 {
@@ -31,6 +32,12 @@ namespace Sistema_de_tickets.Models
         public string usuario { get; set; }
         [JsonIgnore]
         public string contrasenya { get; set; }
+        public byte[]? Foto { get; set; } // Añadido para la foto
+        public string? direccion { get; set; } // Añadido para la direccións
+
+
+        [NotMapped]
+        public IFormFile PhotoUpload { get; set; }
     }
 
     public class prioridad
@@ -68,11 +75,11 @@ namespace Sistema_de_tickets.Models
 
         //Esto me creará las fechas de forma automática
         public DateTime fecha { get; set; } = DateTime.Now;
-        public string? respuesta { get; set; } 
+        public string? respuesta { get; set; }
         public int id_prioridad { get; set; }
         public int id_estado { get; set; }
         public int id_usuario { get; set; }
-        public int id_categoria { get; set; } 
+        public int id_categoria { get; set; }
         public int? id_usuario_asignado { get; set; }
 
     }

@@ -1,7 +1,4 @@
-﻿@{
-    Layout = "_Layout";
-}
-@if (TempData["Message"] != null)
+﻿@if (TempData["Message"] != null)
 {
     <div class="alert alert-success">
         @TempData["Message"]
@@ -16,22 +13,30 @@
                 <div class="card-header text-white" style="background-color: #6f42c1;">
                     AJUSTES
                 </div>
-                <div class="card-body" style="background-color: #f8f9fa;">
-                    <div class="mb-3">
-                        <strong>Cambiar datos de perfil</strong>
-                    </div>
-                    <hr>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="profilePicture" class="form-label">Foto de perfil:</label>
-                            <input type="file" class="form-control" id="profilePicture">
+                <form id="changeProfileForm" action="/Empleado/CambiarFotoPerfil" method="post" enctype="multipart/form-data">
+                    <div class="card-body" style="background-color: #f8f9fa;">
+                        <div class="mb-3">
+                            <strong>Cambiar datos de perfil</strong>
+                        </div>
+                        <hr>
+                        <div class="row mb-3">
+                            <div class="mb-3">
+                                <label for="profilePicture" class="form-label">Foto de perfil:</label>
+                                <input type="file" class="form-control" id="profilePicture" name="photoUpload" accept="image/*">
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary rounded-pill" style="background-color: #0d6efd; border-color: #0d6efd; color: #ffffff;">GUARDAR CAMBIOS</button>
                         </div>
                     </div>
-                    <hr>
-                    <div class="mb-3">
-                        <strong>Cambiar contraseña</strong>
-                    </div>
-                    <form id="changePasswordForm" action="/Cliente/CambiarContrasena" method="post">
+                </form>
+
+                <form id="changePasswordForm" action="/Empleado/CambiarContrasena" method="post">
+                    <div class="card-body" style="background-color: #f8f9fa;">
+                        <div class="mb-3">
+                            <strong>Cambiar contraseña</strong>
+                        </div>
+                        <hr>
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="currentPassword" class="form-label">Contraseña actual:</label>
@@ -51,8 +56,8 @@
                         <div class="text-center mt-3">
                             <button type="submit" class="btn btn-primary rounded-pill" style="background-color: #0d6efd; border-color: #0d6efd; color: #ffffff;">GUARDAR CAMBIOS</button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -64,7 +69,10 @@
                 </div>
                 <div class="card-body text-center" style="background-color: #f8f9fa;">
                     <div class="mb-3">
-                        <img src="#" alt="Imagen de perfil" class="rounded-circle" style="width: 150px; height: 150px;">
+                        @if (ViewBag.FotoUsuario != null)
+                        {
+                            <img id="profileImage" src="@ViewBag.FotoUsuario" alt="Foto de perfil" style="width: 150px; height: 150px;">
+                        }
                     </div>
                     <div class="mb-3">
                         <strong>Nombre:</strong>
@@ -79,3 +87,52 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.getElementById('changeProfileForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('/Empleado/CambiarFotoPerfil', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar la imagen de perfil
+                    document.getElementById('profileImage').src = data.newImageUrl;
+                    alert('Foto actualizada correctamente.');
+                } else {
+                    alert('Error al actualizar la foto.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+        document.getElementById("profilePicture").value = ""; // Limpia el campo de carga de la imagen
+    });
+
+    document.getElementById('changePasswordForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('/Empleado/CambiarContrasena', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Contraseña actualizada correctamente.');
+                } else {
+                    alert('Error al actualizar la contraseña.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+        document.getElementById("currentPassword").value = ""; // Limpia el campo de contraseña actual
+        document.getElementById("newPassword").value = ""; // Limpia el campo de nueva contraseña
+        document.getElementById("confirmNewPassword").value = ""; // Limpia el campo de confirmar nueva contraseña
+    });
+</script>
