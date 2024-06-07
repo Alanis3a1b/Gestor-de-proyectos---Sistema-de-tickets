@@ -6,10 +6,12 @@
 <div class="container mt-5">
     <table class="table table-bordered">
         <!-- Primera fila -->
+
         <thead>
-            <tr style="background-color: #800080; color: white;">
+            <tr style="background-color: #562888; color: white;">
                 <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
-                <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
+
+                <th colspan="4" class="text-lg-end justify-content-lg-end " style="padding-left: 1rem;">
                     <span>BUSCAR POR ESTADO</span>
                     <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;">
                         @Html.Raw(ViewData["SelectOptions"])
@@ -17,17 +19,18 @@
                 </th>
             </tr>
         </thead>
+
         <!-- Segunda fila -->
         <thead>
             <tr style="color: black;">
-                <th style="background-color: #c080c0;"></th>
-                <th style="background-color: #c080c0;">ID</th>
-                <th style="background-color: #c080c0;">ÚLTIMA ACTUALIZACIÓN</th>
-                <th style="background-color: #c080c0;">USUARIO</th>
-                <th style="background-color: #c080c0;">ASUNTO</th>
-                <th style="background-color: #c080c0;">ESTADO</th>
-                <th style="background-color: #c080c0;">ASIGNADO A</th>
-                <th style="background-color: #c080c0;"></th>
+                <th style="background-color: #DF8AEE;"></th>
+                <th style="background-color: #DF8AEE;">ID</th>
+                <th style="background-color: #DF8AEE;">ÚLTIMA ACTUALIZACIÓN</th>
+                <th style="background-color: #DF8AEE;">USUARIO</th>
+                <th style="background-color: #DF8AEE;">ASUNTO</th>
+                <th style="background-color: #DF8AEE;">ESTADO</th>
+                <th style="background-color: #DF8AEE;">ASIGNADO A</th>
+                <th style="background-color: #DF8AEE;"></th>
             </tr>
         </thead>
         <!-- Filas siguientes generadas con datos de la base de datos de los tickets del empleado -->
@@ -35,16 +38,19 @@
             @foreach (var ticket in ticketsEmpleado)
             {
                 <tr>
-                    <td style="background-color: #c080c0;"></td>
+                    <td style="background-color: #DF8AEE;"></td>
                     <td>@ticket.id_ticket</td>
                     <td>@ticket.fecha</td>
                     <td>@ticket.Usuario</td>
                     <td>@ticket.nombre_ticket</td>
                     <td>@ticket.Estado</td>
                     <td>@ticket.AsignadoA</td>
-                    <td>
-                        <a href="@Url.Action("TicketTrabajado", "Empleado", new { id = ticket.id_ticket })">Trabajar</a>
+                    <td style="justify-content">
+
+                        <button class="button-custom" onclick="location.href='@Url.Action("TicketTrabajado", "Empleado", new { id = ticket.id_ticket })'">Trabajar</button>
                     </td>
+
+
                 </tr>
             }
         </tbody>
@@ -60,3 +66,4 @@
         });
     </script>
 }
+

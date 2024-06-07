@@ -75,3 +75,47 @@ form {
     /*display: flex;*/
     flex-direction: column;
 }
+
+
+
+/*TicketsEmpleado*/
+.button-custom {
+    background-color: #562888;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    justify-content: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px; /* Optional: adds rounded corners */
+}
+
+.Con {
+    display: flex;
+    justify-content: space-between; /* Ajusta el espacio entre los contenedores */
+}
+
+.box {
+    display: inline-block;
+    width: 45%; /* Ajusta el ancho de cada contenedor */
+    padding: 20px;
+    margin: 0 2.5%; /* Espacio entre los contenedores */
+    background-color: #d3d3d3;
+    /*border: 1px solid black;*/
+    vertical-align: top; /* Alineación vertical */
+}
+
+.btnGuaradar {
+    margin: 5px;
+}
+
+.left-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
