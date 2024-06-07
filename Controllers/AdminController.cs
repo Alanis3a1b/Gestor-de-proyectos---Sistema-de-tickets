@@ -140,14 +140,22 @@ namespace Sistema_de_tickets.Controllers
 
             _sistemadeticketsDBContext.SaveChanges();
 
-            //Extraer los datos del usuario del ticket
+            //Extraer el correo del creador del ticket
             var ticket = (from t in _sistemadeticketsDBContext.tickets
                           join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
                           join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          where t.id_ticket == id_ticket && t.id_usuario == u.id_usuario
                           select new
                           {
-                              correo = u.correo,
-                              estado = e.nombre_estado,
+                              correo = u.correo,                            
+
+                          }).FirstOrDefault();
+            //Extraer el nombre del nuevo estado
+            var estado = (from e in _sistemadeticketsDBContext.estados
+                          where e.id_estado == id_estado
+                          select new
+                          {
+                              estado = e.nombre_estado
 
                           }).FirstOrDefault();
 
@@ -156,7 +164,22 @@ namespace Sistema_de_tickets.Controllers
             enviarCorreo.enviar(ticket.correo,
                                 "Actualización de su ticket: " + ticketActual.id_ticket,
                                 "Su ticket de nombre: ''" + ticketActual.nombre_ticket + "'' ha sido actualizado" + "\n" + "\n"
+                                + " Estado actual de su ticket: " + estado.estado + "\n"
                                 + " Respuesta de su ticket: " + respuesta);
+
+            //Enviar correo al usuario al quien se le asigno el ticket
+            var dameelcorreo = (from u in _sistemadeticketsDBContext.usuarios 
+                                where id_usuario_asignado == u.id_usuario
+                                select new
+                                {
+                                    correousuario = u.correo
+
+                                }).FirstOrDefault();
+            enviarCorreo.enviar(dameelcorreo.correousuario,
+                                "Se le ha asignado el ticket: #" + id_ticket,
+                                "El administrador le ha asignado la resolución del ticket de nombre: " + ticketActual.nombre_ticket);
+
+
 
             return RedirectToAction("TicketEditado");
         }
