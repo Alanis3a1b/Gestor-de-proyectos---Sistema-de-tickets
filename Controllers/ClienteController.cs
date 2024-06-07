@@ -94,12 +94,6 @@ namespace Sistema_de_tickets.Controllers
             return View();
         }
 
-        public IActionResult Settings()
-        {
-            return View();
-        }
-
-
         public IActionResult TicketTrabajado(int id)
         {
             var ticket = (from t in _sistemadeticketsDBContext.tickets
@@ -275,6 +269,49 @@ namespace Sistema_de_tickets.Controllers
 
             return File(memory, "application/octet-stream", Path.GetFileName(path));
         }
+
+        public IActionResult Settings()
+        {
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            ViewBag.NombreUsuario = datosUsuario.nombre;
+            ViewBag.CorreoUsuario = datosUsuario.correo;
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CambiarContrasena(string currentPassword, string newPassword, string confirmNewPassword)
+        {
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+
+            // Buscar el usuario por su contraseña actual
+            var usuario = _sistemadeticketsDBContext.usuarios.FirstOrDefault(u => u.contrasenya == currentPassword);
+
+            // Validar que el usuario existe y que la nueva contraseña y confirmación coincidan
+            if (usuario == null)
+            {
+                ModelState.AddModelError("currentPassword", "La contraseña actual es incorrecta.");
+                return View("Settings");
+            }
+
+            if (newPassword != confirmNewPassword)
+            {
+                ModelState.AddModelError("confirmNewPassword", "Las contraseñas no coinciden.");
+                return View("Settings");
+            }
+
+            // Actualizar la contraseña en la base de datos
+            usuario.contrasenya = newPassword;
+            _sistemadeticketsDBContext.Update(usuario);
+            _sistemadeticketsDBContext.SaveChanges();
+
+            // Establecer un mensaje de éxito
+            TempData["Message"] = "Contraseña reestablecida correctamente.";
+
+            // Redirigir a la página de Settings
+            return RedirectToAction("Settings");
+        }
+
 
     }
 }
