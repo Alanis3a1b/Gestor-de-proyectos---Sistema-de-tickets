@@ -1,5 +1,4 @@
 ﻿@{
-    Layout = "_Layout";
     var todoslostickets = ViewData["TodosLosTickets"] as IEnumerable<dynamic>;
 }
 
@@ -8,27 +7,29 @@
     <table class="table table-bordered">
         <!-- Primera fila -->
         <thead>
-            <tr style="background-color: #582889; color: white;">
+            <tr style="background-color: #562888; color: white;">
                 <th colspan="4" class="text-center">HISTORIAL TICKETS</th>
-                <th colspan="4" class="text-right justify-content-end" style="padding-right: 1rem;">
+
+                <th colspan="4" class="text-lg-end justify-content-lg-end" style="padding-right: 1rem;">
                     <span>BUSCAR POR ESTADO</span>
-                    <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #D5A9F8;">
+                    <select id="estadoFilter" class="form-control form-control-sm" style="display: inline-block; width: auto; background-color: #c080c0;">
                         @Html.Raw(ViewData["SelectOptions"])
                     </select>
                 </th>
+
             </tr>
         </thead>
         <!-- Segunda fila -->
         <thead>
             <tr style="color: black;">
-                <th style="background-color: #D5A9F8;"></th>
-                <th style="background-color: #D5A9F8;">ID</th>
-                <th style="background-color: #D5A9F8;">ÚLTIMA ACTUALIZACIÓN</th>
-                <th style="background-color: #D5A9F8;">USUARIO</th>
-                <th style="background-color: #D5A9F8;">ASUNTO</th>
-                <th style="background-color: #D5A9F8;">ESTADO</th>
-                <th style="background-color: #D5A9F8;">ASIGNADO A</th>
-                <th style="background-color: #D5A9F8;"></th> <!-- Nueva columna sin título -->
+                <th style="background-color: #c5a1df;"></th>
+                <th style="background-color: #d7c0e7;">ID</th>
+                <th style="background-color: #d7c0e7;">ÚLTIMA ACTUALIZACIÓN</th>
+                <th style="background-color: #d7c0e7;">USUARIO</th>
+                <th style="background-color: #d7c0e7;">ASUNTO</th>
+                <th style="background-color: #d7c0e7;">ESTADO</th>
+                <th style="background-color: #d7c0e7;">ASIGNADO A</th>
+                <th style="background-color: #d7c0e7;"></th> <!-- Nueva columna sin título -->
             </tr>
         </thead>
         <!-- Filas siguientes generadas con datos de la base de datos de todos los tickets-->
@@ -36,7 +37,7 @@
             @foreach (var ticket in todoslostickets)
             {
                 <tr>
-                    <td style="background-color: #D5A9F8;"></td>
+                    <td style="background-color: #d7c0e7;"><i class="bi bi-circle-fill" style="color: white;"></i></td>
                     <td>@ticket.id_ticket</td>
                     <td>@ticket.fecha</td>
                     <td>@ticket.Usuario</td>
@@ -45,7 +46,9 @@
                     <td>@ticket.AsignadoA</td>
                     <!--Aquí me redirijirá dependiento del ticket a la parte para trabajarlo donde de una mando el ID del ticket a trabajar-->
                     <!--"TrabajarTicketAdmin" es la vista especifica y "Admin" es la carpeta de las vistas-->
-                    <td><a href="@Url.Action("TicketTrabajado", "Admin", new { id = ticket.id_ticket })">Trabajar</a></td>
+                    <td>
+                        <button class="button-custom" onclick="location.href='@Url.Action("TicketTrabajado", "Admin", new { id = ticket.id_ticket })'">Trabajar</button>
+                    </td>
 
                 </tr>
             }
@@ -62,3 +65,11 @@
         });
     </script>
 }
+
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
