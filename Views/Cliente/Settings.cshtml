@@ -1,4 +1,8 @@
-﻿@if (TempData["Message"] != null)
+﻿@{
+    Layout = "_LayoutCliente";
+
+}
+@if (TempData["Message"] != null)
 {
     <div class="alert alert-success">
         @TempData["Message"]

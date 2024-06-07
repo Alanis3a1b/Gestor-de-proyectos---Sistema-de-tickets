@@ -1,10 +1,23 @@
 ﻿@{
+    ViewData["Title"] = "Tickets";
+    Layout = "_Layout";
 }
-<div class="container mt-5">
-    <div class="card-header" style="background-color: #800080; color: white;">
-        SE EDITO CORRECTAMENTE
+<head>
+    <link rel="stylesheet" href="/css/site.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body>
+    <div class="container-fluid mt-5">
+        <div class="card-header" style="background-color: #582889; color: white;">
+            SE EDITÓ     CORRECTAMENTE
+        </div>
+        <div class="mt-3">
+            <a href="@Url.Action("TodosLosTickets", "Admin")" class="btn btn-primary">Regresar</a>
+        </div>
     </div>
-    <div class="mt-3">
-        <a href="@Url.Action("TodosLosTickets", "Admin")" class="btn btn-primary">Regresar</a>
-    </div>
-</div>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+
