@@ -1,6 +1,3 @@
-html {
-    font-size: 14px;
-}
 
 @media (min-width: 768px) {
     html {
@@ -15,6 +12,7 @@ html {
 html {
     position: relative;
     min-height: 100%;
+    font-size: 14px;
 }
 
 body {
@@ -22,10 +20,9 @@ body {
 }
 
 .bg-purple {
-    background: url('/images/fondo2.svg') no-repeat center center;
+    background-image: url('../images/fondoMontanasMoradas.jpg');
     background-size: cover;
-    background-color: #6a1b9a;
-    border-radius: 15px;
+    background-position:center;
 }
 
 .btnEmpleado {
@@ -48,18 +45,18 @@ hr {
     margin-top: 20px;
 }
 
-
 /*login*/
 .Fondo {
+    margin-top: -55px;
+    padding-top: 120px;
     background-image: url('/images/LoginBG.png');
-    height: 100vh;
+    padding-bottom: 120px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
     /*display: flex;*/
     justify-content: center;
     align-items: center;
-    margin-bottom: auto;
 }
 
 .login-container {
@@ -68,7 +65,7 @@ hr {
     box-shadow: rgba(44, 44, 44, 0.1));
     text-align: center;
     padding: 20px 30px 40px;
-    margin-bottom;
+    margin-top: 200px;
 }
 
 form {

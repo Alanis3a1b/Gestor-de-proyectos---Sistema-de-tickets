@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Sistema_de_tickets.Models;
 using Sistema_de_tickets.Views.Services;
 using System.Diagnostics;
+using System.Linq;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Hosting;
 using System.Text.Json;
 
 
