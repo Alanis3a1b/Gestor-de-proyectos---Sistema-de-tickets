@@ -230,23 +230,6 @@ namespace Sistema_de_tickets.Controllers
             return RedirectToAction("CrearUsuariosAdmin");
         }
 
-
-        //Eliminar usuario
-        public IActionResult EliminarUsuarioAdmin(int id)
-        {
-            var usuario = _sistemadeticketsDBContext.usuarios.Find(id);
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            _sistemadeticketsDBContext.usuarios.Remove(usuario);
-            _sistemadeticketsDBContext.SaveChanges();
-
-            return RedirectToAction("CrearUsuariosAdmin");
-
-        }
-
         public IActionResult TicketEditado()
         {
             return View();

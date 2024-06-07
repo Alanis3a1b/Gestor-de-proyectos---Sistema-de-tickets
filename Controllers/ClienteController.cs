@@ -211,6 +211,7 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
 
+            //Enviar correo de confirmación al usuario que lo crea
             correo enviarCorreo = new correo(_configuration);
             enviarCorreo.enviar(datosUsuario.correo,
                                 "Su ticket ha sido creado correctamente!",
@@ -219,6 +220,27 @@ namespace Sistema_de_tickets.Controllers
                                 + "La categoría de su ticket es de: " + ticketInfo.categoria + "\n"
                                 + "Estado del ticket: " + ticketInfo.estado + "\n"
                                 + "Y la prioridad de su ticket es de: " + ticketInfo.prioridad);
+
+            //Enviar correo de ticket creado a los admin
+            var admins = (from u in _sistemadeticketsDBContext.usuarios 
+                          join e in _sistemadeticketsDBContext.rol on u.id_rol equals e.id_rol
+                          where u.id_rol == 2
+                          select new
+                          {
+                              correo = u.correo,
+
+                          });
+
+            foreach (var admin in admins)
+            {
+                enviarCorreo.enviar(admin.correo,
+                                    "SE HA CREADO UN NUEVO TICKET",
+                                    "Se ha creado el ticket: " + nuevoTicket.id_ticket + "\n"
+                                    + "Con el nombre de: " + nuevoTicket.nombre_ticket + "\n"
+                                    + "La categoría de su ticket es de: " + ticketInfo.categoria + "\n"
+                                    + "Estado del ticket: " + ticketInfo.estado + "\n"
+                                    + "Y la prioridad de su ticket es de: " + ticketInfo.prioridad);
+            }
 
             return RedirectToAction("Success");
         }
