@@ -24,90 +24,127 @@
 
 <div class="container mt-5">
     <div class="card mb-3">
-        <div class="card-header" style="background-color: #800080; color: white;">
+        <div class="card-header" style="background-color: #562888; color: white;">
             TICKET # @ticket.id_ticket
         </div>
+
+
+
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
-            <p class="font-weight-bold">
-                Información de contacto
-            </p>
-            <div class="form-group">
-                <label for="fullName" class="font-weight-bold">Nombre completo:</label>
-                <input type="text" class="form-control" id="fullName" value="@ticket.nombre" readonly>
-            </div>
+
+            <h3>Datos del ticket</h3>
+            <hr class="border-5 border-dark" style="border-block-color:black">
+
+            <div class="Con">
+
+                @* Apartado Detalles Ticket *@
+
+                <div class="box">
+                    <p class="fw-bold">
+                        Detalles de Ticket
+                    </p>
+                    <div class="form-group">
+                        <label for="ticketTitle" class="fw-bold">Título del ticket:</label>
+                        <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
+                    </div>
+                    <p class="fw-bold">
+                        Descripción del Ticket
+                    </p>
+                    <div class="form-group p-2" style="background-color: #e9edee; border-radius: 5px">
+                        @Html.Raw(ticket.descripcion)
+                    </div>
+                    <div class="form-group">
+                        <label for="estado" class="fw-bold">Estado:</label>
+                        <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>
+                    </div>
+                    <br />
+                    @* Mostrar y descargar archivo adjunto *@
+                    <div class="form-group">
+                        @if (!string.IsNullOrEmpty(ticket.url_archivo))
+                        {
+                            <a href="@Url.Action("DescargarArchivo", "Admin", new { filePath = ticket.url_archivo })" class="btn btn-info p-2 m-2" style=" background-color: #562888; color: white " download>Descargar archivo</a>
+                        }
+                        else
+                        {
+                            <p>No hay archivo adjunto.</p>
+                        }
+                    </div>
+
+                    @*Prioridad*@
+                    <div class="form-group">
+                        <label for="prioridad" class="fw-bold">Prioridad:</label><br />
+                        <input type="radio" id="normal" name="prioridad" value="1" @(ticket.id_prioridad == 1 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                        <label for="normal">Normal</label><br />
+                        <input type="radio" id="media" name="prioridad" value="2" @(ticket.id_prioridad == 2 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                        <label for="media">Media</label><br />
+                        <input type="radio" id="alta" name="prioridad" value="3" @(ticket.id_prioridad == 3 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                        <label for="alta">Alta</label><br />
+                        <input type="radio" id="critico" name="prioridad" value="4" @(ticket.id_prioridad == 4 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
+                        <label for="critico">Crítico</label>
+                    </div>
+                </div>
+
+
+                @* Fin Apartado Detalles Ticket *@
+
+                @* Apartado info Contacto *@
+                <div class="box">
+                    <p class="fw-bold">
+                        Información de contacto
+                    </p>
+                    <div class="form-group">
+                        <label for="fullName" class="fw-bold">Nombre completo:</label>
+                        <input type="text" class="form-control" id="fullName" value="@ticket.nombre" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone" class="fw-bold">Número de teléfono:</label>
+                        <input type="text" class="form-control" id="phone" value="@ticket.telefono_usuario" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="fw-bold">Email:</label>
+                        <input type="email" class="form-control" id="email" value="@ticket.correo_usuario" readonly>
+                    </div>
+                    <hr>
+
+                </div>
+
+         </div>
+
+
+            @* Respuesta al Ticket *@
 
             <div class="form-group">
-                <label for="phone" class="font-weight-bold">Número de teléfono:</label>
-                <input type="text" class="form-control" id="phone" value="@ticket.telefono_usuario" readonly>
-            </div>
-            <div class="form-group">
-                <label for="email" class="font-weight-bold">Email:</label>
-                <input type="email" class="form-control" id="email" value="@ticket.correo_usuario" readonly>
-            </div>
-            <hr>
-            <p class="font-weight-bold">
-                Detalles de Ticket
-            </p>
-            <div class="form-group">
-                <label for="ticketTitle" class="font-weight-bold">Título del ticket:</label>
-                <input type="text" class="form-control" id="ticketTitle" value="@ticket.nombre_ticket" readonly>
-            </div>
-            <p class="font-weight-bold">
-                Descripción del Ticket
-            </p>
-            <div class="form-group">
-                <hr>
-                @Html.Raw(ticket.descripcion)
-            </div>
-            <div class="form-group">
-                <label for="estado" class="font-weight-bold">Estado:</label>
-                <input type="text" class="form-control" id="estado" value="@ticket.Estado" readonly>
-            </div>
-
-            @* Mostrar y descargar archivo adjunto *@
-            <div class ="form-group">
-                @if (!string.IsNullOrEmpty(ticket.url_archivo))
-                {
-                    <a href="@Url.Action("DescargarArchivo", "Admin", new { filePath = ticket.url_archivo })" class="btn btn-info" download>Descargar archivo</a>
-                }
-                else
-                {
-                    <p>No hay archivo adjunto.</p>
-                }
-            </div>
-
-            @*Prioridad*@
-            <div class="form-group">
-                <label for="prioridad" class="font-weight-bold">Prioridad:</label><br />
-                <input type="radio" id="normal" name="prioridad" value="1" @(ticket.id_prioridad == 1 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
-                <label for="normal">Normal</label><br />
-                <input type="radio" id="media" name="prioridad" value="2" @(ticket.id_prioridad == 2 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
-                <label for="media">Media</label><br />
-                <input type="radio" id="alta" name="prioridad" value="3" @(ticket.id_prioridad == 3 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
-                <label for="alta">Alta</label><br />
-                <input type="radio" id="critico" name="prioridad" value="4" @(ticket.id_prioridad == 4 ? "checked" : "") onclick="uncheckOthersPrioridad(this)">
-                <label for="critico">Crítico</label>
-            </div>
-
-            <div class="form-group">
-                <label for="respuesta" class="font-weight-bold">Respuesta:</label>
+                <label for="respuesta" class="fw-bold">Respuesta:</label>
                 <textarea id="respuesta" name="respuesta" class="form-control">@Html.Raw(!string.IsNullOrEmpty(ticket.respuesta) ? ticket.respuesta : "Sin respuesta por el momento")</textarea>
             </div>
+
+
             @*Estado*@
-            <div class="form-group">
-                <label for="estadoCombo" class="font-weight-bold">Cambiar Estado:</label><br />
-                <input type="radio" id="abierto" name="estado" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
-                <label for="abierto">Abierto</label><br />
-                <input type="radio" id="espera" name="estado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
-                <label for="espera">En espera de información del cliente</label><br />
-                <input type="radio" id="cerrado" name="estado" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
-                <label for="cerrado">Cerrado</label><br />
-                <input type="radio" id="resuelto" name="estado" value="4" @(ticket.id_estado == 4 ? "checked" : "") onclick="uncheckOthers(this)">
-                <label for="resuelto">Resuelto</label>
+            <div class="left-container">
+                <div class="p-5 fw-bold">
+                    <label for="estadoCombo" class="fw-bold">Cambiar Estado:</label><br />
+                </div>
+
+                <div class ="p-2">
+                    <input type="radio" id="abierto" name="estado" value="1" @(ticket.id_estado == 1 ? "checked" : "") onclick="uncheckOthers(this)">
+                    <label for="abierto">Abierto</label><br />
+
+                    <input type="radio" id="espera" name="estado" value="2" @(ticket.id_estado == 2 ? "checked" : "") onclick="uncheckOthers(this)">
+                    <label for="espera">En espera de información del cliente</label><br />
+
+                    <input type="radio" id="cerrado" name="estado" value="3" @(ticket.id_estado == 3 ? "checked" : "") onclick="uncheckOthers(this)">
+                    <label for="cerrado">Cerrado</label><br />
+
+                    <input type="radio" id="resuelto" name="estado" value="4" @(ticket.id_estado == 4 ? "checked" : "") onclick="uncheckOthers(this)">
+                    <label for="resuelto">Resuelto</label>
+                </div>
             </div>
+
+
             @*Asignar Usuario*@
             <div class="form-group">
-                <label for="usuarioAsignado" class="font-weight-bold">Asignar Ticket:</label>
+                <label for="usuarioAsignado" class="fw-bold">Asignar Ticket:</label>
                 <select id="usuarioAsignado" name="usuarioAsignado" class="form-control">
                     @foreach (var usuario in ViewBag.Usuarios)
                     {
@@ -117,11 +154,16 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small" onclick="guardarCambios()">Guardar Cambios</button>
-        <button type="button" class="btn btn-secondary btn-lg small ml-2" onclick="history.back()">REGRESAR</button>
+    <div class="d-flex justify-content-lg-end">
+        <button type="button" class="btn btn-primary btn-lg small p-2 m-2" style="background-color: #562888;  padding-bottom" onclick="guardarCambios()">Guardar Cambios</button>
+        <button type="button" class="btn btn-primary btn-lg small p-2 m-2" style="background-color: #562888;  padding-bottom" onclick="history.back()">REGRESAR</button>
     </div>
 </div>
+
+
+
+
+
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

@@ -38,7 +38,7 @@
                         <label for="estado" class="fw-bold">Estado:</label>
                         <input type="text" class="form-control" id="estado" value="@ViewData["Estado"]" readonly>
                     </div>
-
+                    
                     <div class="form-group">
                         @if (!string.IsNullOrEmpty(ticket.url_archivo))
                         {
@@ -118,8 +118,6 @@
     <div class="d-flex justify-content-lg-end">
 
         <button type="button" class="btn btn-primary btn-lg small p-2 m-2" style="background-color: #562888;  padding-bottom" onclick="guardarCambios()">GUARDAR RESPUESTA</button>
-
-
 
         <button type="button" class="btn btn-secondary btn-lg small ml-2 p-2 m-2" style="background-color: #562888; padding-bottom" onclick="history.back()">REGRESAR</button>
 
