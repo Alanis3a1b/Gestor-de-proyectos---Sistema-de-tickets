@@ -26,8 +26,11 @@
                 <div class="form-group">
                     <label for="correo" class="font-weight-bold">Ingrese el correo del usuario: <span style="color: red;">*</span></label>
                     @Html.TextBox("correo", "", new { @class = "form-control" })
+                </div>             
+                <div class="form-group">
+                    <label for="direccion" class="font-weight-bold">Ingrese su dirección: <span style="color: red;">*</span></label>
+                    @Html.TextBox("direccion", "", new { @class = "form-control" })
                 </div>
-
                 <div class="form-group">
                     <label for="rol" class="font-weight-bold">Seleccione el tipo de usuario a crear: <span style="color: red;">*</span></label>
                     @Html.DropDownList("id_rol", ViewData["listadoDeRoles"] as SelectList, "--Sin rol--", new { @class = "form-control" })
@@ -52,7 +55,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="form-group">
+                <div class="form-group" style="text-align: left;">
                     <label for="usuario" class="font-weight-bold">Ingrese el usuario con el que se autenticará (No mayor de 10 caracteres): <span style="color: red;">*</span></label>
                     @Html.TextBox("usuario", "", new { @class = "form-control" })
                 </div>
@@ -65,7 +68,7 @@
                 <div class="d-flex justify-content-end">
                     <!-- Utiliza un botón de tipo "button" para evitar envíos de formulario -->
                     <input type="submit" class="btn btn-primary btn-lg small" value="CREAR USUARIOS" />
-                </div>
+                </div>              
 
             </form>
             <!--Tabla con todos los usuarios-->
@@ -73,7 +76,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr style="background-color: #582889; color: white;">
-                        <th colspan="10" class="text-center">USUARIOS</th>
+                        <th colspan="11" class="text-center">USUARIOS</th>
                     </tr>
                 </thead>
                 <thead>
@@ -84,6 +87,7 @@
                         <th style="background-color: #c080c0;">CORREO</th>
                         <th style="background-color: #c080c0;">ROL</th>
                         <th style="background-color: #c080c0;">EMPRESA</th>
+                        <th style="background-color: #c080c0;">DIRECCIÓN</th>
                         <th style="background-color: #c080c0;">USUARIO</th>
                         <th style="background-color: #c080c0;">CONTRASEÑA</th>
                     </tr>
@@ -98,6 +102,7 @@
                             <td>@usuario.correo</td>
                             <td>@usuario.rol</td>
                             <td>@usuario.nombre_empresa</td>
+                            <td>@usuario.direccion</td>
                             <td>@usuario.usuario</td>
                             <td class="password">@usuario.contrasenya</td>
                         </tr>

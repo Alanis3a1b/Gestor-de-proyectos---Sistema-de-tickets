@@ -211,8 +211,9 @@ namespace Sistema_de_tickets.Controllers
                                        m.id_usuario,
                                        m.nombre,
                                        m.correo,
-                                       rol = r.nombre_rol,
+                                       rol = r.nombre_rol,                                       
                                        m.nombre_empresa,
+                                       m.direccion,
                                        m.usuario,
                                        m.contrasenya
                                    }).ToList();
@@ -229,14 +230,20 @@ namespace Sistema_de_tickets.Controllers
             _sistemadeticketsDBContext.SaveChanges();
             enviarCorreo.enviar(usuarioNuevo.correo,
                                 "Cuenta para acceder a HELPHUB",
-                                "Se le ha asignado una nueva cuenta cuyo nombre de cuenta es: " + usuarioNuevo.usuario + "\n"
-                                + " Y su contraseña es:  " + usuarioNuevo.contrasenya + "\n"
-                                + " La contraseña la puede cambiar ingresando a su cuenta e ingresando luego a su perfil.");
+                                "Bienvenido a HELPHUB " + "\n"
+                                + "Se le ha asignado una nueva cuenta cuyo nombre de cuenta es: " + usuarioNuevo.usuario + "\n"
+                                + "Y su contraseña es:  " + usuarioNuevo.contrasenya + "\n"
+                                + "La contraseña la puede cambiar ingresando a su cuenta e ingresando a la plataforma y en Ajustes puede configurar una nueva");
 
-            return RedirectToAction("CrearUsuariosAdmin");
+            return RedirectToAction("Success");
         }
 
         public IActionResult TicketEditado()
+        {
+            return View();
+        }
+
+        public IActionResult Success()
         {
             return View();
         }
