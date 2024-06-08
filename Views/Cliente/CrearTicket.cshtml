@@ -5,74 +5,101 @@
 
 <div class="container mt-5">
     <div class="card mb-3">
-        <div class="card-header" style="background-color: #800080; color: white;">
+        <div class="card-header" style="background-color: #562888; color: white;">
             CREAR NUEVO TICKET
         </div>
+
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
-            <p class="font-weight-bold" style="text-align: left;">
-                Por favor rellenar el formulario para abrir un nuevo ticket.
-            </p>
-            <hr>
-            <p class="font-weight-bold">
+
+
+            <h3>Por favor rellenar el formulario para abrir un nuevo ticket.</h3>
+            <hr class="border-5 border-dark" style="border-block-color:black">
+
+            @* Apartado info Contacto*@
+
+            <p class="fw-bold">
                 Información de contacto
             </p>
-            <form asp-action="CrearTickets" enctype="multipart/form-data">
+
+            <div class="contact-info">
+
+                @*  <form asp-action="CrearTickets" enctype="multipart/form-data"> *@
                 <div class="form-group">
-                    <label for="telefono_usuario" class="font-weight-bold">Número de teléfono: <span style="color: red;">*</span></label>
+                    <label for="telefono_usuario" class="fw-bold">Número de teléfono: <span style="color: red;">*</span></label>
                     @Html.TextBox("telefono_usuario", "", new { @class = "form-control", placeholder = "Ingrese su numero de contacto" })
                 </div>
+
+
                 <div class="form-group">
-                    <label for="categoria" class="font-weight-bold">Categoría de su problemática: <span style="color: red;">*</span></label>
+                    <label for="categoria" class="fw-bold">Categoría de su problemática: <span style="color: red;">*</span></label>
                     @Html.DropDownList("id_categoria", ViewData["listadoDeCategorias"] as SelectList, "--Sin categoría--", new { @class = "form-control" })
                 </div>
-                <hr>
+
+
                 <div class="form-group">
-                    <label for="prioridad" class="font-weight-bold">¿Cuánto es la prioridad de su problema?: <span style="color: red;">*</span></label>
+                    <label for="prioridad" class="fw-bold">¿Cuánto es la prioridad de su problema?: <span style="color: red;">*</span></label>
                     @Html.DropDownList("id_prioridad", ViewData["listadoDePrioridad"] as SelectList, "--Sin prioridad--", new { @class = "form-control" })
                 </div>
                 <hr>
-                @* Seccion para subir archivos *@
-                <div class="form-group">
-                    <label for="archivoAdjunto" class="font-weight-bold">Archivo:</label>
-                    <input type="file" id="archivoAdjunto" name="archivoAdjunto" class="form-control-file">
-                </div>
-                @* Fin de la seccion para subir archivos *@
-                <hr>
-                <div>
-                    <p class="font-weight-bold">
-                        Detalles de Ticket
-                    </p>
-                    <p>
-                        Por favor describa su problemática
-                    </p>
-                    <p class="font-weight-bold">
-                        Titulo del ticket
-                    </p>
-                    @Html.TextBox("nombre_ticket", "", new { @class = "form-control", placeholder = "Ingrese el título del ticket" })
 
-                </div>
-                <hr>
-                <!-- Text Editor Placeholder -->
-                <div class="form-group">
-                    <label for="ticketDescription" class="font-weight-bold">Descripción del ticket</label>
-                    @Html.TextArea("descripcion", "", new { id = "ticketDescription", @class = "form-control", rows = "5", @placeHolder = "Ingrese la descripción del ticket" })
-                </div>
-                <hr>
-                <div class="form-group row mb-4">
-                    <div class="col-sm-2"></div>
-                    <div class="d-flex justify-content-end">
-                        <input type="submit" class="btn btn-primary btn-lg small" value="CREAR TICKET" />
-                    </div>
-                </div>
-                <div>
-                    <!-- Elementos estáticos para la creación de tickets que luego se modificarán al trabajarlos -->
-                    @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
-                    @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
-                    @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
-                    @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
-                </div>
+            </div>
+            @*Fin  Apartado info Contacto*@
 
-            </form>
+
+
+            @* Seccion para subir archivos *@
+            <div class="form-group">
+                <label for="archivoAdjunto" class="fw-bold">Archivo:</label><br />
+                <input type="file" id="archivoAdjunto" name="archivoAdjunto" class="form-control-file">
+            </div><br />
+            @* Fin de la seccion para subir archivos *@
+
+
+
+            @* Apartado Detalles Ticket *@
+            <div>
+                <h3>Por favor describa su problemática</h3>
+                <hr class="border-5 border-dark" style="border-block-color:black">
+
+                <p class="fw-bold">
+                    Detalles de Ticket:
+                </p>
+
+                <p class="fw-bold">
+                    Titulo del ticket
+                </p>
+                @Html.TextBox("nombre_ticket", "", new { @class = "form-control", placeholder = "Ingrese el título del ticket" })
+
+            </div>
+
+
+            @* Fin Apartado Detalles Ticket *@
+
+
+
+            <!-- Text Editor Placeholder -->
+            <div class="form-group">
+                <label for="ticketDescription" class="fw-bold">Descripción del ticket</label>
+                @Html.TextArea("descripcion", "", new { id = "ticketDescription", @class = "form-control", rows = "5", @placeHolder = "Ingrese la descripción del ticket" })
+            </div><br />
+
+
+            <hr>
+            <div class="form-group row mb-4">
+                <div class="col-sm-2"></div>
+                <div class="d-flex justify-content-end">
+                    <input type="submit" class="btn btn-primary btn-lg small p-2 m-2" style="background-color: #562888;  padding-bottom" value="CREAR TICKET" />
+                </div>
+            </div>
+            <div>
+                <!-- Elementos estáticos para la creación de tickets que luego se modificarán al trabajarlos -->
+                @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
+                @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
+                @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
+                @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
+            </div>
+
+            @* </form> *@
 
         </div>
     </div>
@@ -116,3 +143,4 @@
         });
     </script>
 }
+

@@ -9,60 +9,66 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
-<div class="container-fluid mt-5">
-    <div class="container-fluid card text-white mb-3 rounded-5 bg-purple p-4 ms-3 me-3">
-        <div class="card-body container-fluid">
-            <h5 class="card-title">Bienvenido a HelpHub</h5>
-            <p class="card-text">
-                En HelpHub estamos dedicados a brindarte soluciones rápidas y orientación experta para todos
-                tus problemas de tecnología de la información (IT). Nuestro equipo de expertos está aquí para ayudarte a resolver cualquier input
-                , desde problemas técnicos hasta consultas de software. En HelpHub, tu satisfacción es nuestra
-                prioridad número uno. ¡Déjanos encargarnos de tus preocupaciones tecnológicas para que puedas concentrarte en lo que realmente importa!
-            </p>
+<div class="container-fluid" style=" width: auto" ">
+
+    <div class="container mt-5">
+        <div class="card text-white bg-purple mb-3 w-100 rounded" style="background-color: #6a1b9a;">
+            <div class="card-body ">
+                <h5 class="card-title">Bienvenido a HelpHub</h5>
+                <p class="card-text">
+                    En HelpHub estamos dedicados a brindarte soluciones rápidas y orientación experta para todos
+                    tus problemas de tecnología de la información (IT). Nuestro equipo de expertos está aquí para ayudarte a resolver cualquier input
+                    , desde problemas técnicos hasta consultas de software. En HelpHub, tu satisfacción es nuestra
+                    prioridad número uno. ¡Déjanos encargarnos de tus preocupaciones tecnológicas para que puedas concentrarte en lo que realmente importa!
+                </p>
+            </div>
         </div>
     </div>
-    <hr />
-</div>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("CrearTicket", "Cliente")'">CREAR NUEVO TICKET</button>
-    </div>
 
-    <hr />
 
-    <table class="table table-bordered">
-        <thead>
-            <tr style="background-color: #800080; color: white;">
-                <th colspan="6" class="text-center">TUS TICKETS</th>
-            </tr>
-        </thead>
-        <thead>
-            <tr style="color: black;">
-                <th style="background-color: #c080c0;"></th>
-                <th style="background-color: #c080c0;">ID</th>
-                <th style="background-color: #c080c0;">ÚLTIMA ACTUALIZACIÓN</th>
-                <th style="background-color: #c080c0;">USUARIO</th>
-                <th style="background-color: #c080c0;">ASUNTO</th>
-                <th style="background-color: #c080c0;">ESTADO</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in tickets)
-            {
-                <tr>
-                    <td style="background-color: #c080c0;"></td>
-                    <td>@ticket.id_ticket</td>
-                    <td>@ticket.fecha.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>@ticket.usuario</td>
-                    <td>@ticket.nombre_ticket</td>
-                    <td>@ticket.nombre_estado</td>
+
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-center">
+            <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("CrearTicket", "Cliente")'">CREAR NUEVO TICKET</button>
+        </div>
+
+        <hr />
+
+        <table class="table table-bordered">
+            <thead>
+                <tr style="background-color: #562888; color: white;">
+                    <th colspan="6" class="text-center">TUS TICKETS</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <thead>
+                <tr style="color: black;">
+                    <th style="background-color: #c5a1df;"></th>
+                    <th style="background-color: #c5a1df;">ID</th>
+                    <th style="background-color: #c5a1df;">ÚLTIMA ACTUALIZACIÓN</th>
+                    <th style="background-color: #c5a1df;">USUARIO</th>
+                    <th style="background-color: #c5a1df;">ASUNTO</th>
+                    <th style="background-color: #c5a1df;">ESTADO</th>
+                </tr>
+            </thead>
+            <tbody>
+@foreach (var ticket in tickets)
+{
+                    <tr>
+                        <td style="background-color: #c5a1df;"></td>
+                        <td>@ticket.id_ticket</td>
+                        <td>@ticket.fecha.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                        <td>@ticket.usuario</td>
+                        <td>@ticket.nombre_ticket</td>
+                        <td>@ticket.nombre_estado</td>
+                    </tr>
+}
+            </tbody>
+        </table>
 
-    <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("HistorialDeTickets", "Cliente")'">VER HISTORIAL DE TICKETS</button>
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary btn-lg small" onclick="location.href='@Url.Action("HistorialDeTickets", "Cliente")'">VER HISTORIAL DE TICKETS</button>
+        </div>
     </div>
 </div>

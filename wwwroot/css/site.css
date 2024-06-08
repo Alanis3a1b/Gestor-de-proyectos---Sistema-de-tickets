@@ -116,3 +116,9 @@ form {
     align-items: flex-start;
 }
 
+/*TicketsClientes*/
+.contact-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px; /* Ajusta el espacio entre columnas */
+}
