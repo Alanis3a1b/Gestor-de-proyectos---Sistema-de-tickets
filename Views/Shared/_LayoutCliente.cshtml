@@ -28,16 +28,16 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow mb-3" style="background-color: #14053D;">
-            <div class="container-fluid">
+            <div class="container-fluid justify-content-start">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/logo3.png"></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <!--BOTON DE CERRAR SESION-->
-                <div class="col-md-12">
-                    <a class="navbar-brand text-white" asp-area="" asp-controller="Inicio" asp-action="Index">Cerrar sesión</a>
-                </div>
+            </div>
+            <!--BOTON DE CERRAR SESION-->
+            <div class="collapse navbar-collapse justify-content-end">
+                <a class="navbar-brand text-white" asp-area="" asp-controller="Inicio" asp-action="Index">Cerrar Sesión</a>
             </div>
         </nav>
     </header>
