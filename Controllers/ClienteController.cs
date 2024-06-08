@@ -178,6 +178,37 @@ namespace Sistema_de_tickets.Controllers
         {
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
 
+            // Validaciones
+            if (string.IsNullOrWhiteSpace(nuevoTicket.telefono_usuario) || nuevoTicket.telefono_usuario.Length != 8)
+            {
+                TempData["Error"] = "El número de teléfono debe tener 8 dígitos.";
+                return RedirectToAction("CrearTicket");
+            }
+
+            if (string.IsNullOrWhiteSpace(nuevoTicket.nombre_ticket) || nuevoTicket.nombre_ticket.Length <= 7)
+            {
+                TempData["Error"] = "El título del ticket es muy corto.";
+                return RedirectToAction("CrearTicket");
+            }
+
+            if (string.IsNullOrWhiteSpace(nuevoTicket.descripcion) || nuevoTicket.descripcion.Length <= 10)
+            {
+                TempData["Error"] = "La descripción del ticket es muy corta";
+                return RedirectToAction("CrearTicket");
+            }
+
+            if (nuevoTicket.id_categoria == 0)
+            {
+                TempData["Error"] = "Debe seleccionar una categoría.";
+                return RedirectToAction("CrearTicket");
+            }
+
+            if (nuevoTicket.id_prioridad == 0)
+            {
+                TempData["Error"] = "Debe seleccionar una prioridad.";
+                return RedirectToAction("CrearTicket");
+            }
+
             var ticketInfo = (from c in _sistemadeticketsDBContext.categorias
                               join e in _sistemadeticketsDBContext.estados on nuevoTicket.id_estado equals e.id_estado
                               join p in _sistemadeticketsDBContext.prioridad on nuevoTicket.id_prioridad equals p.id_prioridad
@@ -211,6 +242,7 @@ namespace Sistema_de_tickets.Controllers
             nuevoTicket.nombre_usuario = datosUsuario.nombre;
             nuevoTicket.id_usuario = datosUsuario.id_usuario;
             nuevoTicket.id_usuario_asignado = null;
+
             _sistemadeticketsDBContext.Add(nuevoTicket);
             _sistemadeticketsDBContext.SaveChanges();
 
@@ -225,13 +257,12 @@ namespace Sistema_de_tickets.Controllers
                                 + "Y la prioridad de su ticket es de: " + ticketInfo.prioridad);
 
             //Enviar correo de ticket creado a los admin
-            var admins = (from u in _sistemadeticketsDBContext.usuarios 
+            var admins = (from u in _sistemadeticketsDBContext.usuarios
                           join e in _sistemadeticketsDBContext.rol on u.id_rol equals e.id_rol
                           where u.id_rol == 2
                           select new
                           {
                               correo = u.correo,
-
                           });
 
             foreach (var admin in admins)
@@ -247,6 +278,7 @@ namespace Sistema_de_tickets.Controllers
 
             return RedirectToAction("Success");
         }
+
 
 
         public IActionResult Success()

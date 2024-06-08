@@ -242,8 +242,45 @@ namespace Sistema_de_tickets.Controllers
         }
 
         //Crear usuarios
+        //Crear usuarios
         public IActionResult CrearUsuariossAdmin(usuarios usuarioNuevo)
         {
+            // Validar que todos los campos necesarios estén llenos
+            if (string.IsNullOrEmpty(usuarioNuevo.nombre) ||
+                string.IsNullOrEmpty(usuarioNuevo.correo) ||
+                string.IsNullOrEmpty(usuarioNuevo.direccion) ||
+                string.IsNullOrEmpty(usuarioNuevo.usuario) ||
+                string.IsNullOrEmpty(usuarioNuevo.contrasenya) ||
+                string.IsNullOrEmpty(usuarioNuevo.nombre_empresa) ||
+                string.IsNullOrEmpty(usuarioNuevo.contacto_principal) ||
+                string.IsNullOrEmpty(usuarioNuevo.telefono_contacto))
+            {
+                TempData["Error"] = "Todos los campos son obligatorios.";
+                return RedirectToAction("CrearUsuariosAdmin");
+            }
+
+            // Validar que el correo tenga al menos 10 caracteres
+            if (usuarioNuevo.correo.Length < 10)
+            {
+                TempData["Error"] = "El correo debe tener al menos 10 caracteres.";
+                return RedirectToAction("CrearUsuariosAdmin");
+            }
+
+            // Validar que el nombre no contenga números
+            if (usuarioNuevo.nombre.Any(char.IsDigit))
+            {
+                TempData["Error"] = "El nombre no puede contener números.";
+                return RedirectToAction("CrearUsuariosAdmin");
+            }
+
+            // Validar que el usuario no exista
+            if (_sistemadeticketsDBContext.usuarios.Any(u => u.usuario == usuarioNuevo.usuario))
+            {
+                TempData["Error"] = "El nombre de usuario ya existe.";
+                return RedirectToAction("CrearUsuariosAdmin");
+            }
+
+            // Si todas las validaciones son correctas, continuar con la creación del usuario
             correo enviarCorreo = new correo(_configuration);
             _sistemadeticketsDBContext.Add(usuarioNuevo);
             _sistemadeticketsDBContext.SaveChanges();
@@ -256,6 +293,8 @@ namespace Sistema_de_tickets.Controllers
 
             return RedirectToAction("Success");
         }
+
+
 
         public IActionResult TicketEditado()
         {

@@ -10,43 +10,31 @@
         </div>
 
         <div class="card-body" style="background-color: #d3d3d3; color: black;">
-
-
             <h3>Por favor rellenar el formulario para abrir un nuevo ticket.</h3>
             <hr class="border-5 border-dark" style="border-block-color:black">
 
-            @* Apartado info Contacto*@
-
+            @* Apartado info Contacto *@
             <p class="fw-bold">
                 Información de contacto
             </p>
 
             <form asp-action="CrearTickets" enctype="multipart/form-data">
                 <div class="contact-info">
-
-                    @*  <form asp-action="CrearTickets" enctype="multipart/form-data"> *@
                     <div class="form-group">
                         <label for="telefono_usuario" class="fw-bold">Número de teléfono: <span style="color: red;">*</span></label>
                         @Html.TextBox("telefono_usuario", "", new { @class = "form-control", placeholder = "Ingrese su numero de contacto" })
                     </div>
-
-
                     <div class="form-group">
                         <label for="categoria" class="fw-bold">Categoría de su problemática: <span style="color: red;">*</span></label>
                         @Html.DropDownList("id_categoria", ViewData["listadoDeCategorias"] as SelectList, "--Sin categoría--", new { @class = "form-control" })
                     </div>
-
-
                     <div class="form-group">
                         <label for="prioridad" class="fw-bold">¿Cuánto es la prioridad de su problema?: <span style="color: red;">*</span></label>
                         @Html.DropDownList("id_prioridad", ViewData["listadoDePrioridad"] as SelectList, "--Sin prioridad--", new { @class = "form-control" })
                     </div>
                     <hr>
-
                 </div>
-                @*Fin  Apartado info Contacto*@
-
-
+                @*Fin  Apartado info Contacto *@
 
                 @* Seccion para subir archivos *@
                 <div class="form-group">
@@ -55,35 +43,21 @@
                 </div><br />
                 @* Fin de la seccion para subir archivos *@
 
-
-
                 @* Apartado Detalles Ticket *@
                 <div>
                     <h3>Por favor describa su problemática</h3>
                     <hr class="border-5 border-dark" style="border-block-color:black">
-
-                    <p class="fw-bold">
-                        Detalles de Ticket:
-                    </p>
-
-                    <p class="fw-bold">
-                        Titulo del ticket
-                    </p>
+                    <p class="fw-bold">Detalles de Ticket:</p>
+                    <p class="fw-bold">Titulo del ticket</p>
                     @Html.TextBox("nombre_ticket", "", new { @class = "form-control", placeholder = "Ingrese el título del ticket" })
-
                 </div>
-
-
                 @* Fin Apartado Detalles Ticket *@
-
-
 
                 <!-- Text Editor Placeholder -->
                 <div class="form-group">
                     <label for="ticketDescription" class="fw-bold">Descripción del ticket</label>
                     @Html.TextArea("descripcion", "", new { id = "ticketDescription", @class = "form-control", rows = "5", @placeHolder = "Ingrese la descripción del ticket" })
                 </div><br />
-
 
                 <hr>
                 <div class="form-group row mb-4">
@@ -92,21 +66,14 @@
                         <input type="submit" class="btn btn-primary btn-lg small p-2 m-2" style="background-color: #562888;  padding-bottom" value="CREAR TICKET" />
                     </div>
                 </div>
-                <div>
             </form>
-            
-                <!-- Elementos estáticos para la creación de tickets que luego se modificarán al trabajarlos -->
-                @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
-                @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
-                @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
-                @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
-            </div>
 
-            @* </form> *@
-
+            @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
+            @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
+            @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
+            @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
         </div>
     </div>
-
 </div>
 
 <!-- Scripts específicos de la vista CrearTicket.cshtml -->
@@ -117,33 +84,37 @@
             selector: '#ticketDescription',
             plugins: 'image imagetools media link codesample table',
             toolbar: 'undo redo | formatselect | bold italic underline | fontsizeselect | fontselect | link | table | image media',
-            images_upload_url: '/Cliente/TicketTrabajado', // URL del método de carga de archivos en tu controlador
-            images_upload_base_path: '/uploads', // Ruta base para las imágenes cargadas
+            images_upload_url: '/Cliente/TicketTrabajado',
+            images_upload_base_path: '/uploads',
             images_upload_credentials: true,
             automatic_uploads: true,
             file_picker_types: 'image media',
             file_picker_callback: function (callback, value, meta) {
                 if (meta.filetype === 'image') {
-                    // Open a dialog to choose an image from the web or local storage
-                    // For example, you can use a file input field to let the user choose a file
                     document.getElementById('file-input').click();
                     document.getElementById('file-input').onchange = function () {
                         var file = this.files[0];
                         var reader = new FileReader();
                         reader.onload = function (e) {
-                            // Assume "url" is the URL of the uploaded image
                             var url = URL.createObjectURL(file);
                             callback(url, { title: file.name });
                         };
                         reader.readAsDataURL(file);
                     };
                 } else if (meta.filetype === 'media') {
-                    // Open a dialog to choose a media file from the web or local storage
-                    // Implement similar logic as above for media files
                     console.log('Select media file');
                 }
             }
         });
+
+        // Mostrar alerta si hay un mensaje de error
+        @if (TempData["Error"] != null)
+        {
+            <text>
+                alert("@TempData["Error"]");
+            window.location.href = '/Cliente/CrearTicket';
+            </text>
+        }
     </script>
 }
 
