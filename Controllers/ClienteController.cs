@@ -286,7 +286,30 @@ namespace Sistema_de_tickets.Controllers
         }
 
 
-        public IActionResult Settings()
+        /*public IActionResult Settings()
+        {
+            var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
+            ViewBag.NombreUsuario = datosUsuario.nombre;
+            ViewBag.CorreoUsuario = datosUsuario.correo;
+
+            if (datosUsuario.Foto != null)
+            {
+                string base64Image = Convert.ToBase64String(datosUsuario.Foto);
+                ViewBag.FotoUsuario = $"data:image/png;base64,{base64Image}";
+            }
+            else if (!string.IsNullOrEmpty(datosUsuario.direccion))
+            {
+                ViewBag.FotoUsuario = "/" + datosUsuario.direccion.Replace("\\", "/");
+            }
+            else
+            {
+                ViewBag.FotoUsuario = null;
+            }
+
+            return View();
+        }*/
+
+        public IActionResult AjustesCliente()
         {
             var datosUsuario = JsonSerializer.Deserialize<usuarios>(HttpContext.Session.GetString("user"));
             ViewBag.NombreUsuario = datosUsuario.nombre;
