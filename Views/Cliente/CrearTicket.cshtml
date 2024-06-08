@@ -59,6 +59,11 @@
                     @Html.TextArea("descripcion", "", new { id = "ticketDescription", @class = "form-control", rows = "5", @placeHolder = "Ingrese la descripción del ticket" })
                 </div><br />
 
+                @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
+                @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
+                @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
+                @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
+
                 <hr>
                 <div class="form-group row mb-4">
                     <div class="col-sm-2"></div>
@@ -68,10 +73,7 @@
                 </div>
             </form>
 
-            @Html.TextBox("url_archivo", " ", new { @class = "form-control", type = "hidden" })
-            @Html.TextBox("respuesta", " ", new { @class = "form-control", type = "hidden" })
-            @Html.TextBox("id_estado", "1", new { @class = "form-control", type = "hidden" })
-            @Html.Hidden("id_usuario") <!-- Campo oculto para enviar el ID del usuario -->
+            
         </div>
     </div>
 </div>
