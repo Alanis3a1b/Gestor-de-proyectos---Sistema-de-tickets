@@ -46,7 +46,26 @@ namespace Sistema_de_tickets.Controllers
                                e.nombre_estado
                            }).ToList();
             ViewBag.Tickets = tickets;
+
+            var ticketsPorMes = new int[12];
+
+            // Agrupar los tickets por mes y contar la cantidad de tickets en cada grupo
+            var resultado = _sistemadeticketsDBContext.tickets
+                               .GroupBy(t => t.fecha.Month)
+                               .Select(g => new { Mes = g.Key, Cantidad = g.Count() })
+                               .ToList();
+
+            // Llenar el array ticketsPorMes con los resultados
+            foreach (var item in resultado)
+            {
+                ticketsPorMes[item.Mes - 1] = item.Cantidad; // Restar 1 para que el índice del array comience en 0
+            }
+
+            // Pasar los datos a la vista
+            ViewBag.fecha = ticketsPorMes;
+
             return View();
+
         }
 
         public IActionResult TodosLosTickets(string estado = "Todos")

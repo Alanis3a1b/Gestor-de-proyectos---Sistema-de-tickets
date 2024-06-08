@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Newtonsoft.Json
+@{
     ViewData["Title"] = "Home Page";
     var tickets = ViewBag.Tickets;
 }
@@ -84,34 +85,24 @@
 
             <script>
                 var ctx = document.getElementById('GraficoBarras').getContext('2d');
+                var fecha = @Html.Raw(JsonConvert.SerializeObject(ViewBag.fecha));
+
+                // Asegúrate de que 'fecha' es un array con 12 elementos (uno por cada mes)
+                if (!Array.isArray(fecha) || fecha.length !== 12) {
+                    console.error('Los datos de fecha no están en el formato correcto');
+                    fecha = Array(12).fill(0); // Rellenar con ceros si hay un problema
+                }
+
                 var myChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
                         datasets: [{
-                            label: '# de Tickets',
-                            data: [12, 19, 3, 5, 2, 3, 7, 10, 23, 15, 4, 9],
-                            backgroundColor: [
-                                'rgba(163, 139, 187, 0.5)',
-                                'rgba(163, 139, 187, 0.5',
-                                'rgba(163, 139, 187, 0.5',
-                                'rgba(163, 139, 187, 0.5',
-                                'rgba(163, 139, 187, 0.5',
-                                'rgba(163, 139, 187, 0.5',
-                                'rgba(163, 139, 187, 0.5'
-                            ],
-                            borderColor: [
-
-
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)',
-                                'rgba(149, 94, 225, 1)'
-                            ],
-                            borderWidth: 2
+                            label: 'Número de Tickets',
+                            data: fecha,
+                            backgroundColor: 'rgba(163, 139, 187, 0.5)',
+                            borderColor: 'rgba(149, 94, 225, 1)',
+                            borderWidth: 1
                         }]
                     },
                     options: {
