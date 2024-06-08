@@ -34,7 +34,12 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <!--BOTON DE CERRAR SESION-->
+                <div class="col-md-12">
+                    <a class="navbar-brand text-white" asp-area="" asp-controller="Inicio" asp-action="Index">Cerrar sesión</a>
+                </div>
             </div>
+            
         </nav>
     </header>
     <div class="container-fluid d-flex">
@@ -47,10 +52,6 @@
 
                     <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="TodosLosTickets">
                         <img src="~/images/ticketsImg.png" alt="Tickets" style="width: 30px;">
-                    </a><br />
-
-                    <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="TrabajarTicketAdmin">
-                        <img src="~/images/ticketsAsignarImg.png" alt="Asignar" style="width: 30px;">
                     </a><br />
 
                     <a class="navbar-brand" asp-area="" asp-controller="Admin" asp-action="CrearUsuariosAdmin">
