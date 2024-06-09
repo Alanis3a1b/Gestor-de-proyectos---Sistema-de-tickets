@@ -19,12 +19,14 @@ namespace Sistema_de_tickets.Controllers
         private readonly sistemadeticketsDBContext _sistemadeticketsDBContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUserService _userService;
+        private readonly IConfiguration _configuration;
 
-        public EmpleadoController(sistemadeticketsDBContext sistemadeticketsDbContext, IWebHostEnvironment webHostEnvironment, IUserService userService)
+        public EmpleadoController(sistemadeticketsDBContext sistemadeticketsDbContext, IWebHostEnvironment webHostEnvironment, IUserService userService, IConfiguration configuration)
         {
             _sistemadeticketsDBContext = sistemadeticketsDbContext;
             _webHostEnvironment = webHostEnvironment;
             _userService = userService;
+            _configuration = configuration;
         }
 
         public IActionResult HomeEmpleado()
@@ -120,6 +122,37 @@ namespace Sistema_de_tickets.Controllers
             ticket.id_estado = id_estado;
 
             _sistemadeticketsDBContext.SaveChanges();
+
+            //Extraer el correo del creador del ticket
+            var ticketA = (from t in _sistemadeticketsDBContext.tickets
+                          join u in _sistemadeticketsDBContext.usuarios on t.id_usuario equals u.id_usuario
+                          join e in _sistemadeticketsDBContext.estados on t.id_estado equals e.id_estado
+                          where t.id_ticket == id_ticket && t.id_usuario == u.id_usuario
+                          select new
+                          {
+                              t.nombre_ticket,
+                              correo = u.correo,
+
+                          }).FirstOrDefault();
+
+            //Extraer el nombre del nuevo estado
+            var estado = (from e in _sistemadeticketsDBContext.estados
+                          where e.id_estado == id_estado
+                          select new
+                          {
+                              estado = e.nombre_estado
+
+                          }).FirstOrDefault();
+
+            //Enviar correo de actualización
+            correo enviarCorreo = new correo(_configuration);
+            enviarCorreo.enviar(ticketA.correo,
+                                "Actualización de su ticket: " + ticket.id_ticket,
+                                "Su ticket de nombre: ''" + ticketA.nombre_ticket + "'' ha sido actualizado" + "\n" + "\n"
+                                + " Estado actual de su ticket: " + estado.estado + "\n"
+                                + " Respuesta de su ticket: " + respuesta);
+
+
 
             return RedirectToAction("TicketEditado");
         }

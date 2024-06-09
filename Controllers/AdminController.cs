@@ -175,6 +175,7 @@ namespace Sistema_de_tickets.Controllers
                               correo = u.correo,
 
                           }).FirstOrDefault();
+
             //Extraer el nombre del nuevo estado
             var estado = (from e in _sistemadeticketsDBContext.estados
                           where e.id_estado == id_estado
@@ -200,6 +201,7 @@ namespace Sistema_de_tickets.Controllers
                                     correousuario = u.correo
 
                                 }).FirstOrDefault();
+
             enviarCorreo.enviar(dameelcorreo.correousuario,
                                 "Se le ha asignado el ticket: #" + id_ticket,
                                 "El administrador le ha asignado la resolución del ticket de nombre: " + ticketActual.nombre_ticket);
